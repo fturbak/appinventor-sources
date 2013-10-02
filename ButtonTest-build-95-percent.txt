@@ -1,0 +1,234 @@
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.BuildServer buildAllFromZipFileAsync
+     [java] INFO: requiredHosts is not set, no restriction on callback url.
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.BuildServer$1 run
+     [java] INFO: START NEW BUILD 2
+     [java] Libraries needed, n= 0
+     [java] Native Libraries needed, n= 0
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.BuildServer checkMemory
+     [java] INFO: Build 2 current used memory: 11249256 bytes
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.ProjectBuilder build
+     [java] INFO: temporary project root: /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.ProjectBuilder extractProjectFiles
+     [java] INFO: extracting /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/src/appinventor/ai_test/ButtonTest/Screen1.bky from input zip
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.ProjectBuilder extractProjectFiles
+     [java] INFO: extracting /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/src/appinventor/ai_test/ButtonTest/Screen1.scm from input zip
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.ProjectBuilder extractProjectFiles
+     [java] INFO: extracting /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/src/appinventor/ai_test/ButtonTest/Screen1.yail from input zip
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.ProjectBuilder extractProjectFiles
+     [java] INFO: extracting /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/project.properties from input zip
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.ProjectBuilder extractProjectFiles
+     [java] INFO: extracting /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/android.keystore from input zip
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 10%
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler generatePermissions
+     [java] INFO: usesLocation = False
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 15%
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler writeAndroidManifest
+     [java] INFO: VCode: 1
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler writeAndroidManifest
+     [java] INFO: VName: 1.0
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 20%
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Compiler generateClasses
+     [java] INFO: source file: /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../src/appinventor/ai_test/ButtonTest/Screen1.yail
+     [java] Jan 07, 2014 9:43:00 PM com.google.appinventor.buildserver.Execution execute
+     [java] INFO: ____Executing /Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/jre/bin/java -mx1848M -cp /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/kawa1569998760590259532.jar:/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/acra-4.4.01984029216641367809.jar:/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/AndroidRuntime2551885093854407233.jar:/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/android8311034501013497133.jar kawa.repl -f /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/runtime8733666405275498364.scm -d /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/classes -P appinventor.ai_test.ButtonTest. -C /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../src/appinventor/ai_test/ButtonTest/Screen1.yail /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/runtime8733666405275498364.scm
+     [java] Component assets needed, n= 0
+     [java] Libraries Classpath, n 0
+     [java] Libraries Classpath = /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/kawa1569998760590259532.jar:/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/acra-4.4.01984029216641367809.jar:/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/AndroidRuntime2551885093854407233.jar:/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/android8311034501013497133.jar
+     [java] Libraries needed command line n = 0
+     [java] Libraries command line = [/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/jre/bin/java, -mx1848M, -jar, /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/dx_5855624459952479694.jar, --dex, --positions=lines, --output=/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/tmp/classes.dex, /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/classes, /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/AndroidRuntime2551885093854407233.jar, /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/kawa1569998760590259532.jar, /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/acra-4.4.01984029216641367809.jar]
+     [java] Jan 07, 2014 9:43:03 PM com.google.appinventor.buildserver.Compiler generateClasses
+     [java] INFO: Kawa compile time: 2.466 seconds
+     [java] Jan 07, 2014 9:43:03 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 35%
+     [java] Jan 07, 2014 9:43:03 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 50%
+     [java] Jan 07, 2014 9:43:03 PM com.google.appinventor.buildserver.Execution execute
+     [java] INFO: ____Executing /Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/jre/bin/java -mx1848M -jar /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/dx_5855624459952479694.jar --dex --positions=lines --output=/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/tmp/classes.dex /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/classes /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/AndroidRuntime2551885093854407233.jar /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/kawa1569998760590259532.jar /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/acra-4.4.01984029216641367809.jar
+     [java] Jan 07, 2014 9:43:24 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 75%
+     [java] Jan 07, 2014 9:43:24 PM com.google.appinventor.buildserver.Compiler runDx
+     [java] INFO: DX time: 21.581 seconds
+     [java] Jan 07, 2014 9:43:24 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 85%
+     [java] Jan 07, 2014 9:43:24 PM com.google.appinventor.buildserver.Execution execute
+     [java] INFO: ____Executing /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/aapt7015219495284797619 package -v -f -M /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/AndroidManifest.xml -S /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res -A /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../assets -I /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/android8311034501013497133.jar -F /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/deploy/ButtonTest.ap_
+     [java] Jan 07, 2014 9:43:25 PM com.google.appinventor.buildserver.Compiler runAaptPackage
+     [java] INFO: AAPT time: 0.743 seconds
+     [java] Jan 07, 2014 9:43:25 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 90%
+     [java] Found 0 custom asset files in /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../assets
+     [java] Configurations:
+     [java]  (default)
+     [java] 
+     [java] Files:
+     [java]   anim/fadein.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/fadein.xml
+     [java]   anim/fadeout.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/fadeout.xml
+     [java]   anim/hold.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/hold.xml
+     [java]   anim/slide_enter.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_enter.xml
+     [java]   anim/slide_enter_reverse.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_enter_reverse.xml
+     [java]   anim/slide_exit.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_exit.xml
+     [java]   anim/slide_exit_reverse.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_exit_reverse.xml
+     [java]   anim/slide_v_enter.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_enter.xml
+     [java]   anim/slide_v_enter_reverse.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_enter_reverse.xml
+     [java]   anim/slide_v_exit.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_exit.xml
+     [java]   anim/slide_v_exit_reverse.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_exit_reverse.xml
+     [java]   anim/zoom_enter.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_enter.xml
+     [java]   anim/zoom_enter_reverse.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_enter_reverse.xml
+     [java]   anim/zoom_exit.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_exit.xml
+     [java]   anim/zoom_exit_reverse.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_exit_reverse.xml
+     [java]   drawable/ya.png
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/drawable/ya.png
+     [java]   AndroidManifest.xml
+     [java]     Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/AndroidManifest.xml
+     [java] 
+     [java] Resource Dirs:
+     [java]   Type anim
+     [java]     anim/fadein.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/fadein.xml
+     [java]     anim/fadeout.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/fadeout.xml
+     [java]     anim/hold.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/hold.xml
+     [java]     anim/slide_enter.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_enter.xml
+     [java]     anim/slide_enter_reverse.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_enter_reverse.xml
+     [java]     anim/slide_exit.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_exit.xml
+     [java]     anim/slide_exit_reverse.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_exit_reverse.xml
+     [java]     anim/slide_v_enter.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_enter.xml
+     [java]     anim/slide_v_enter_revJan 07, 2014 9:43:26 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 95%
+     [java] Jan 07, 2014 9erse.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_enter_reverse.xml
+     [java]     anim/slide_v_exit.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn:43:26 PM com.google.appinventor.buildserver.Execution execute
+     [java] INFO: ____Executing /Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/jre/../bin/jarsigner -digestalg SHA1 -sigalg MD5withRSA -keystore /var/folders/78/wznvlmv952l60bqckzxcbc3w000/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_exit.xml
+     [java]     anim/slide_v_exit_reverse.xml
+     [java]   0gn/T/1389148980858_0.438502612285374-0/android.keystore -storepass android /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/138    Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_exit_reverse.xml
+     [java]     anim/zoom_enter.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/138914898089148980858_0.438502612285374-0/youngandroidproject/../build/deploy/ButtonTest.apk AndroidKey
+     [java] 58_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_enter.xml
+     [java]     anim/zoom_enter_reverse.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_enter_reverse.xml
+     [java]     anim/zoom_exit.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_exit.xml
+     [java]     anim/zoom_exit_reverse.xml
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_exit_reverse.xml
+     [java]   Type drawable
+     [java]     drawable/ya.png
+     [java]       Src: () /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/drawable/ya.png
+     [java] Including resources from package: /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/android8311034501013497133.jar
+     [java] applyFileOverlay for drawable
+     [java] applyFileOverlay for layout
+     [java] applyFileOverlay for anim
+     [java] applyFileOverlay for animator
+     [java] applyFileOverlay for interpolator
+     [java] applyFileOverlay for xml
+     [java] applyFileOverlay for raw
+     [java] applyFileOverlay for color
+     [java] applyFileOverlay for menu
+     [java] applyFileOverlay for mipmap
+     [java] Processing image: /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/drawable/ya.png
+     [java]     (processed image /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/drawable/ya.png: 103% size of source)
+     [java]     (new resource id ya from drawable/ya.png #generated)
+     [java]     (new resource id fadein from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/fadein.xml)
+     [java]     (new resource id fadeout from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/fadeout.xml)
+     [java]     (new resource id hold from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/hold.xml)
+     [java]     (new resource id slide_enter from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_enter.xml)
+     [java]     (new resource id slide_enter_reverse from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_enter_reverse.xml)
+     [java]     (new resource id slide_exit from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_exit.xml)
+     [java]     (new resource id slide_exit_reverse from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_exit_reverse.xml)
+     [java]     (new resource id slide_v_enter from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_enter.xml)
+     [java]     (new resource id slide_v_enter_reverse from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_enter_reverse.xml)
+     [java]     (new resource id slide_v_exit from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_exit.xml)
+     [java]     (new resource id slide_v_exit_reverse from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/slide_v_exit_reverse.xml)
+     [java]     (new resource id zoom_enter from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_enter.xml)
+     [java]     (new resource id zoom_enter_reverse from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_enter_reverse.xml)
+     [java]     (new resource id zoom_exit from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_exit.xml)
+     [java]     (new resource id zoom_exit_reverse from /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/res/anim/zoom_exit_reverse.xml)
+     [java] Creating '/var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/deploy/ButtonTest.ap_'
+     [java] Writing all files...
+     [java]       'res/anim/fadein.xml' (compressed 51%)
+     [java]       'res/anim/fadeout.xml' (compressed 51%)
+     [java]       'res/anim/hold.xml' (compressed 53%)
+     [java]       'res/anim/slide_enter.xml' (compressed 52%)
+     [java]       'res/anim/slide_enter_reverse.xml' (compressed 52%)
+     [java]       'res/anim/slide_exit.xml' (compressed 53%)
+     [java]       'res/anim/slide_exit_reverse.xml' (compressed 52%)
+     [java]       'res/anim/slide_v_enter.xml' (compressed 52%)
+     [java]       'res/anim/slide_v_enter_reverse.xml' (compressed 52%)
+     [java]       'res/anim/slide_v_exit.xml' (compressed 52%)
+     [java]       'res/anim/slide_v_exit_reverse.xml' (compressed 52%)
+     [java]       'res/anim/zoom_enter.xml' (compressed 57%)
+     [java]       'res/anim/zoom_enter_reverse.xml' (compressed 58%)
+     [java]       'res/anim/zoom_exit.xml' (compressed 59%)
+     [java]       'res/anim/zoom_exit_reverse.xml' (compressed 60%)
+     [java]       'res/drawable/ya.png' (not compressed)
+     [java]       'AndroidManifest.xml' (compressed 68%)
+     [java]       'resources.arsc' (not compressed)
+     [java] Generated 18 files
+     [java] Included 0 files from jar/zip files.
+     [java] Checking for deleted files
+     [java] Done!
+     [java] Packaging ButtonTest.apk
+     [java] /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/deploy/ButtonTest.ap_:
+     [java] => res/anim/fadein.xml
+     [java] => res/anim/fadeout.xml
+     [java] => res/anim/hold.xml
+     [java] => res/anim/slide_enter.xml
+     [java] => res/anim/slide_enter_reverse.xml
+     [java] => res/anim/slide_exit.xml
+     [java] => res/anim/slide_exit_reverse.xml
+     [java] => res/anim/slide_v_enter.xml
+     [java] => res/anim/slide_v_enter_reverse.xml
+     [java] => res/anim/slide_v_exit.xml
+     [java] => res/anim/slide_v_exit_reverse.xml
+     [java] => res/anim/zoom_enter.xml
+     [java] => res/anim/zoom_enter_reverse.xml
+     [java] => res/anim/zoom_exit.xml
+     [java] => res/anim/zoom_exit_reverse.xml
+     [java] => res/drawable/ya.png
+     [java] => AndroidManifest.xml
+     [java] => resources.arsc
+     [java] /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/tmp/classes.dex => classes.dex
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.Execution execute
+     [java] INFO: ____Executing /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/zipalign7153536132396486665 -f 4 /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/deploy/ButtonTest.apk /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/1389148980858_0.438502612285374-0/youngandroidproject/../build/tmp/zipaligned.apk
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.Compiler runZipAlign
+     [java] INFO: ZIPALIGN time: 0.116 seconds
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.Compiler setProgress
+     [java] INFO: The current progress is 100%
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer build
+     [java] INFO: Build output: ________Preparing application icon<br>________Creating animation xml<br>________Determining permissions<br>________Generating manifest file<br>________Attaching native libraries<br>________Copying native libraries<br>________Attaching component assets<br>________Compiling source files<br>(compiling appinventor/ai_test/ButtonTest/Screen1.yail to appinventor.ai_test.ButtonTest.Screen1)<br>(compiling /var/folders/78/wznvlmv952l60bqckzxcbc3w0000gn/T/runtime8733666405275498364.scm to com.google.youngandroid.runtime)<br>Kawa compile time: 2.466 seconds<br>________Invoking DX<br>DX time: 21.581 seconds<br>________Invoking AAPT<br>AAPT time: 0.743 seconds<br>________Invoking ApkBuilder<br>________Signing the apk file<br>________ZipAligning the apk file<br>ZIPALIGN time: 0.116 seconds<br>Build finished in 26.834 seconds<br>
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer build
+     [java] INFO: Build error output: 
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer checkMemory
+     [java] INFO: Build 2 current used memory: 11292552 bytes
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer$1 run
+     [java] INFO: CallbackURL: http://localhost:8888/ode2/receivebuild/d6n1jwvy3alqmu3vbbuqvhfijh26fjvkdb8lbck90l5ndl1wwkdqyt1elu48j2e4tebxsk4v29qn2fsvr1fe8zm5yd3dh1tmteh991udi6g0v0h7frbw2rc97ci1e8fu6h1q94x7h1/build/Android
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer$1 run
+     [java] SEVERE: Exception: Connection refused and the length is of inputZip is 4104
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer checkMemory
+     [java] INFO: Build 2 current used memory: 11228968 bytes
+     [java] Jan 07, 2014 9:43:27 PM com.google.appinventor.buildserver.BuildServer$1 run
+     [java] INFO: BUILD 2 FINISHED

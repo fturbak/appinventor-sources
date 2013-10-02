@@ -1,0 +1,7 @@
+01010101
+
+64 16 4 1 => 85 = ASCII 'U'
+
+010101 => 21 = Base 64 'V'
+
+So "UUU" in base 64 is "VVVV"

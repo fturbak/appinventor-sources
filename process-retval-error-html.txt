@@ -1,0 +1,401 @@
+The operation contains cannot accept the arguments: <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Devon & Somerset Fire & Rescue Service Newsdesk</title>
+
+<link href="/CSS/Layout.css" rel="stylesheet" type="text/css" /> 
+<link href="/CSS/ContributeUserStyles.css" rel="stylesheet" type="text/css" />
+<link href="/CSS/Navigation.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/CSS/print.css" type="text/css" media="print" />
+
+</head>
+<body>
+<div id="siteContainer">
+<div id="topBorder"></div>
+<div id="leftBorder"></div>
+<div id="contentContainer">
+<div id="headerContainer">
+ <div id="logoContainer">
+ 
+                <img src="/Images/DSFRSLogo.jpg" alt="Devon And Somerset Fire And Rescue Service Logo" width="301" height="128"/>
+        
+</div>
+<div id="commercialServicesTab"><a target="_blank" href="http://www.red1ltd.com/"><img src="/Images/CommercialServicesTab.png" alt="Commercial Services" width="184" height="39" class="noImageBorder" /></a></div>
+<div id="searchContainer">
+    <form action="/searchResults.cfm?siteCategoryId=1" method="post">           
+   <img src="/Images/magnifying-glass-icon.png" width="32" height="32"/>
+   <input name="txtSearch" type="text" id="searchTextfield"  placeholder="Search DSFRS Website"  />  
+  </form>
+         
+</div>
+
+</div>
+
+<div id="navigationContainer" class="clearFloat">
+     
+<div id="navSpacer"></div>
+
+                                
+                                                        <div class="siteNavigation"><a href="/index.cfm?siteCategoryId=1">Home</a></div>
+                                                                                                
+                                                                                                                
+                                                                                                                           
+                                                                                                                              <div class="siteNavigation"><a href="/FireAuthority/Index.cfm?siteCategoryId=10">Fire Authority</a></div>
+                                                                                                                                                                                                                     
+                                                                                                                                                                                                                       
+                                                                                                                                                                                                                           
+                                                                                                                                                                                                                              <div class="siteNavigation"><a href="/aboutus/index.cfm?siteCategoryId=2">About Us</a></div>
+                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                        <div class="siteNavigation"><a href="/YourSafety/Index.cfm?siteCategoryId=4">Your Safety</a></div>
+                                                                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="siteNavigationSelected"><a href="/news/Index.cfm?siteCategoryId=3">News</a></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <div class="siteNavigation"><a href="/YourArea/Index.cfm?siteCategoryId=12">Your Area</a></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <div class="siteNavigation"><a href="/YoungPeople/Index.cfm?siteCategoryId=5">Young People</a></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <div class="siteNavigation"><a href="/WorkingForUs/Index.cfm?siteCategoryId=13">Working for Us</a></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="siteNavigation"><a href="/ContactUs/Index.cfm?siteCategoryId=6">Contact Us</a></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+</div>
+<div id="navigationContainerEditMode"></div>
+<div id="navagationBottomLine" class="clearFloat"></div>
+<div id="contentWrapper">
+  <div id="pageContentContainer">
+  <div id="leftSidebar">
+       <div id="subNavigationContainer">        
+
+                                                <div class="SubNavigationTier1Selected">
+                                                                <ul>
+                                                                                                <li>
+                    <a href="/News/Newsdesk/Newsdesk.cfm?siteCategoryId=3&amp;T1ID=26">Newsdesk</a>
+                    </li>
+                                        </ul>
+                                                        </div>
+            
+            
+                                                                
+        
+                        <div class="SubNavigationTier2">
+                            <ul>
+                                <li>
+                                  <a href="/News/Newsdesk/IncidentsPast7days.cfm?siteCategoryId=3&amp;T1ID=26&amp;T2ID=35">Incidents Past 7 Days</a>
+                                </li>
+                            </ul>
+                        </div>
+  
+                                                                                                
+        
+                        <div class="SubNavigationTier2">
+                            <ul>
+                                <li>
+                                  <a href="/News/Newsdesk/PressReleases.cfm?siteCategoryId=3&amp;T1ID=26&amp;T2ID=36">Press Releases</a>
+                                </li>
+                            </ul>
+                        </div>
+  
+                                                                                                
+        
+                        <div class="SubNavigationTier2">
+                            <ul>
+                                <li>
+                                  <a href="/News/Newsdesk/SearchIncidents.cfm?siteCategoryId=3&amp;T1ID=26&amp;T2ID=41">Search Incidents</a>
+                                </li>
+                            </ul>
+                        </div>
+  
+                                                                                                
+        
+                        <div class="SubNavigationTier2">
+                            <ul>
+                                <li>
+                                  <a href="/News/Newsdesk/RSSFeeds.cfm?siteCategoryId=3&amp;T1ID=26&amp;T2ID=37">News Feeds (RSS)</a>
+                                </li>
+                            </ul>
+                        </div>
+  
+                                                                                                
+        
+                        <div class="SubNavigationTier2">
+                            <ul>
+                                <li>
+                                  <a href="/News/Newsdesk/PressContacts.cfm?siteCategoryId=3&amp;T1ID=26&amp;T2ID=42">Press Contacts</a>
+                                </li>
+                            </ul>
+                        </div>
+  
+                                </div>
+                                <div id="sidbarContactUsContainer">
+                                <div id="sidbarContactUsTitle">Contact us</div>
+     <div id="sidbarContactUsContent">
+          <p><strong>Devon &amp; Somerset Fire &amp; Rescue Service<br />
+          </strong>Service Headquarters <br />
+            The Knowle 
+            <br />
+            Clyst St George 
+            <br />
+            Exeter<br />
+            EX3 0NW </p>
+            <p><a href="mailto:comments@dsfire.gov.uk">comments@dsfire.gov.uk</a></p>
+            <p><a href="http://www.dsfire.gov.uk/ContactUs/ContactUsForm.cfm?siteCategoryId=6&T1ID=86">Contact us Form</a></p>
+          01392 872 200 (24 hours)
+       </div>
+       </div>
+  </div>
+  <div id="leftSidebarEditMode"></div>
+<div id="articleContainer">
+ <div id="articleImage"><a href="PressReleaseArticle.cfm?ReleaseID=1429&siteCategoryId=3&T1ID=26&T2ID=36"><img src="/Images/ImageBank/Web/Appliances/Image2.jpg" alt="Paignton Appliance" class="noImageBorder"/></a></div>
+<div id="articleTitle">Latest Press Release - <a href="PressReleaseArticle.cfm?ReleaseID=1429&siteCategoryId=3&T1ID=26&T2ID=36">Firefighters roll up their sleeves for charity</a></div>
+
+
+<div id="articleContent">
+
+ <p>Firefighters are preparing to roll up their sleeves to take part in charity car washes on Saturday 13 September, raising vital funds for The Fire Fighters Charity.</p><p>There will be events at Paignton fire station in Cecil Road from 10am-2pm and Sidmouth fire station in Woolbrook Road from 10am-4pm. </p><p>Motorists are invited to take their car along and have it washed in return for a donati...<a href="PressReleaseArticle.cfm?ReleaseID=1429&siteCategoryId=3&T1ID=26&T2ID=36">Read Full Story</a>
+ 
+ <p></p>
+ 
+ 
+ <div id="latestIncidentTitle">Latest Incident </div>
+ 
+ <p></p>
+ <br />
+
+    <div id="latestIncidentContainer">
+    
+  
+
+        <div id="latestIncidentOverview">
+        
+       
+       <table width="400" border="0" cellspacing="4" cellpadding="4" id="latestIncident">
+            <tr>
+              <td>Incident:</td>
+              <td><a href="IncidentDetail.cfm?IncidentID=30312&siteCategoryId=3&T1ID=26&T2ID=35">Road Traffic Collision Involving a Tractor</a></td>
+            </tr>
+            <tr>
+              <td>Date:</td>
+              <td>09/09/2014</td>
+            </tr>
+            <tr>
+              <td>Time:</td>
+              <td>23:18</td>
+            </tr>
+            <tr>
+              <td>Location:</td>
+              <td>Old Wells Road, Croscombe, Shepton Mallet</td>
+            </tr>
+            <tr>
+              <td>Area:</td>
+              <td>Somerset</td>
+            </tr>
+            <tr>
+              <td>County:</td>
+              <td width="259">Somerset</td>
+              </tr>
+         </table>
+
+         
+      
+        
+        </div>
+        
+        <div id="latestIncidentMap"> <img src="http://www.dsfire.gov.uk/CMS/Newsdesk/images/maps/somerset.jpg"/></div>
+
+        </div>
+    <p></p>
+    
+
+    <div id="moreIncidentsContainer">
+     <table width="600" border="0" cellspacing="0" cellpadding="5" id="moreIncidents">
+      <tr>
+        <td width="319" height="29">Latest Incidents</td>
+        <td width="105">Area</td>
+        <td width="86">Date</td>
+        <td width="50">Time</td>
+        </tr>
+        
+            <tr>
+              <td><a href="IncidentDetail.cfm?IncidentID=30311&siteCategoryId=3&T1ID=26&T2ID=35">Kitchen Fire</a></td>
+              <td>Somerset</td>       
+              <td>09/09/2014</td>
+              <td>22:53</td>
+           </tr>
+        
+            <tr>
+              <td><a href="IncidentDetail.cfm?IncidentID=30310&siteCategoryId=3&T1ID=26&T2ID=35">Road Traffic Collision Involving a Van</a></td>
+              <td>Somerset</td>       
+              <td>09/09/2014</td>
+              <td>21:50</td>
+           </tr>
+        
+            <tr>
+              <td><a href="IncidentDetail.cfm?IncidentID=30309&siteCategoryId=3&T1ID=26&T2ID=35">Chimney Fire</a></td>
+              <td>Central</td>       
+              <td>09/09/2014</td>
+              <td>20:53</td>
+           </tr>
+        
+            <tr>
+              <td><a href="IncidentDetail.cfm?IncidentID=30308&siteCategoryId=3&T1ID=26&T2ID=35">RTC - Make Safe </a></td>
+              <td>Western</td>       
+              <td>09/09/2014</td>
+              <td>19:17</td>
+           </tr>
+        
+            <tr>
+              <td><a href="IncidentDetail.cfm?IncidentID=30307&siteCategoryId=3&T1ID=26&T2ID=35">Lift Rescue </a></td>
+              <td>Central</td>       
+              <td>09/09/2014</td>
+              <td>19:14</td>
+           </tr>
+        
+    </table>
+</div>
+<br />
+<br />
+
+
+</div>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script><script type="text/javascript">stLight.options({publisher:'447ac0c1-5087-43fa-8d89-88f81adeedf8'});</script>
+
+
+<div id="shareThisArticleContainer"> Useful and informative article? Please share it!<p><span class="st_email" title="email to a friend"></span><span class="st_facebook" title="share on facebook"></span><span class="st_twitter" title="share on twitter"></span><span class="st_sharethis"></span></p></div>
+
+
+ 
+<div id="breadcrumbTrail">
+<div class="Breadcrumb">
+     <ul>
+        <li><a href="/index.cfm">Home</a></li>
+        </ul>
+</div>
+
+
+        
+        <div class="Breadcrumb">
+                <img src="/Images/BreadcrumbArrow.png"  class="imageBreadcrumb" alt="arrow spacer" />
+            <ul>
+                                 
+                                                        
+                                                                                
+                                                                                                                <li>
+                                                                                                                                 <a href="/news/Index.cfm?siteCategoryId=3">News</a>
+                                                                                                                                              </li>
+                                                                                                                                                 
+                                                                                                                                                   </ul>
+                                                                                                                                                    </div>
+                                                                                                                                                     
+                                                                                                                                                      <div class="Breadcrumb">
+                                                                                                                                                            <img src="/Images/BreadcrumbArrow.png"  class="imageBreadcrumb" alt="arrow spacer" />
+            <ul>
+                                 
+                                                        
+                                                                                
+                                                                                                                <li>
+                                                                                                                            Newsdesk
+                                                                                                                                </li>
+                                                                                                                                   
+                                                                                                                                     </ul>
+                                                                                                                                      </div>
+                                                                                                                                       
+
+</div>
+
+<div id="breadcrumbTrailEditMode"></div>
+</div>
+</div>
+</div>
+<div id="featuresWrapper" class="clearFloat">
+        
+<a href="http://www.dsfire.gov.uk/YourSafety/SafetyInTheHome/SmokeAlarms/Index.cfm?h…tyInTheHome/SmokeAlarms/Index.cfm?siteCategoryId=4&amp;T1ID=35&amp;T2ID=45"> 
+  <div id="feature1Container">
+                <div id="feature1TopLine">
+                </div>
+                          <div id="feature1Title">
+                               Test Your Smoke Alarm</div>
+                                         <div id="feature1" class="featureLink">
+                                              
+                                                <img src="/Images/HFSV.jpg" alt="Image Of A smoke Alarm" width="134" height="68" class="imageFeature" />
+                                                
+                                                         It's simple, easy and effective and can save your life. <span class="redText">Read More</span>
+                                                           </div>
+  </div>
+</a>        
+                
+<a href="http://www.red1ltd.com/" target="_blank">             
+<div id="feature2Container">
+                <div id="feature2TopLine">
+                </div>
+                                <div id="feature2Title">DSFRS Academy</div>
+                                                              <div id="feature2" class="featureLink">
+                                                                   
+<img src="/Images/TrainingAcademyLogo.jpg" alt="Performance" width="134" height="68" class="imageFeature" />We offer professional, structured courses in Fire Behaviour and Access &amp; Rescue. <span class="redText">Read More</span></div>
+                                           </div>        
+</a>               
+                        
+<a href="http://www.dsfire.gov.uk/YoungPeople/Index.cfm?siteCategoryId=5"> 
+        <div id="feature3Container">
+                <div id="feature3TopLine">
+                </div>
+                                <div id="feature3Title">Firesetters</div>
+                                        <div id="feature3" class="featureLink">
+                                             
+                                                <img src="/Images/FireSettersLogo.jpg" alt="Image Of the Firesetters Logo" width="134" height="68" class="imageFeature" />Concerned about a child playing with fire? Visit our Firesetters page to find out more <span class="redText"> Click Here</span></div>
+                                                     </div>          
+</a>       
+           
+ 
+</div>
+
+
+
+<div id="featuresEditMode"></div>
+<div id="footerContainer">
+     
+    <div id="copyRight"> Acting to Protect and Save -</div>
+    <div id="footerLinks"> <a href="http://www.dsfire.gov.uk/Home/Accessibility.cfm?siteCategoryId=1&amp;T1ID=85" class="greyText">Accessibilty</a> | <a href="http://www.dsfire.gov.uk/Home/Sitemap.cfm?siteCategoryId=1&amp;T1ID=88" class="greyText">Sitemap</a> | <a href="http://www.dsfire.gov.uk/Home/Termsandconditions.cfm?siteCategoryId=1&amp;T1ID=96" class="greyText">Terms</a></div>
+<div id="footerLogos"><img src="/Images/MindfulEmployerLogo.jpg" width="100" height="41" alt="Mindful Employer" /><img src="/Images/StonewallLogo2013.jpg" width="75" height="62" alt="Stonewall Logo" /><img src="/Images/AchievingLevelDiversityLogo.jpg" alt="Achieving - Fire &amp; Rescue Service Equality Framework" width="70" height="50" align="top" />
+<img src="/Images/AFSALogo.jpg" width="85" height="38" alt="ASFA Logo" /><img src="/Images/BQFMemberLogo.jpg" alt="BQF Member Logo" width="90" height="50" align="absbottom" />
+<img src="/Images/PADP_ENGLISH_MONO.jpg" width="75" height="62" alt="An image of the Positive About Disabled People logo"/></div>
+</div>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-20217490-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script> 
+
+</div>
+<div id="rightBorder"></div>
+<div id="bottomBorder" class="clearFloat"></div>
+</div>
+
+</body>
+</html>
+ *nothing* 

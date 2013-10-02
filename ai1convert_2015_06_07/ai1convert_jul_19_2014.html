@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script src="../appinventor/lib/closure-library/closure/goog/base.js"></script>
+    <script type="text/JavaScript" src="aiconvert.js"></script>
+  </head>
+  <body>
+    <p>This is the AI1 to AI2 converter<br>
+      <input type="file" id="fileinput" />
+      <pre>This is a <b>test</b> of pre</pre>
+      <code>This is a <b>test</b> of code</code>
+      <p>File type: <span id="filetype"></span></p>
+      <p>File size: <span id="filesize"></span></p>
+    <hr>
+       Errors:<br>
+       <pre id="errors"><i>Error Messages will be displayed here</i></pre>
+    <hr>
+       Input XML<br>
+       <pre id="inputXML"><i>File contents will be displayed here</i></pre>
+    <hr>
+       Output XML<br>
+       <pre id="outputXML"><i>File contents will be displayed here</i></pre>
+    <hr>
+      <script type="text/javascript">
+        document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+      </script>
+  </body>
+</html>

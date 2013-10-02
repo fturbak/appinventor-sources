@@ -1,0 +1,19 @@
+Capture-avoiding and duplication-avoiding renaming for global variables, procedure parameters, and loop parameters. Also forEach and forRange loops now have parameter variable as editable text field.
+
+[patch 16] Abstracted over variable prefixes in renaming and code generation. Fixed various renaming issues. Fixed code generation for loops and setting variables.
+
+[patch 17] Fix event handlers by getting name of param object, yail type of any allowed for null setCheck
+
+[patch 18] Fix yail generation for else-if clauses
+
+[patch 19] Fix yail in list and alignment on list blocks
+
+[patch 20] Fix yail in for loops
+
+[patch 21 (by lyn)] 
+  + Added do-then-return control block, and removed now-unnecessary do sockets from function declarations and choose blocks. 
+  + Added other new control blocks: eval-but-ignore-result, do-nothing, nothing. 
+  + Added code generators for all the new blocks and modified code generators for the changed function declarations and choose blocks. 
+  + Fixed bug in the code generation for the local declaration expresssion block. 
+
+Change-Id: Ic8fc605f4107aee7f32f424a697d0a110b989146

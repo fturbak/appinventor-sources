@@ -1,0 +1,34 @@
+/* 
+ * CSS file for AI1 to AI2 project converter 
+ * 
+ *  Author: Lyn Turbak (fturbak@wellesley.edu)
+ */
+
+.log_item {
+  background-color: #66FFFF;
+  border: 1px dashed black;
+  margin: 10px 5px;
+  padding: 5px;
+}
+
+.log_item_input {
+  background-color: #CCFF66;
+  border: 1px dashed black;
+  margin: 10px 5px;
+  padding: 5px;
+}
+
+.log_item_output {
+  background-color: #99FF99;
+  border: 1px dashed black;
+  margin: 10px 5px;
+  padding: 5px;
+}
+
+.error_item {
+  background-color: #FF6699;
+  border: 1px dashed black;
+  margin: 10px 5px;
+  padding: 5px;
+}
+

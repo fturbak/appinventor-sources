@@ -1,0 +1,40 @@
+<input type="file" id="fileinput" />
+<pre>
+This is a <b>test</b> of pre
+</pre>
+<code>
+This is a <b>test</b> of code
+</code>
+<p>File type: <span id="filetype"></span></p>
+<p>File size: <span id="filesize"></span></p>
+<hr>
+<pre id="filecontents"><i>File contents will be displayed here</i></pre>
+<hr>
+<script type="text/javascript">
+  function readSingleFile(evt) {
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
+
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+        var contents = e.target.result;
+         alert( "Got the file.\n" 
+               +"name: " + f.name + "\n"
+              +"type: " + f.type + "\n"
+              +"size: " + f.size + " bytes\n"
+              + "starts with: " + contents.substr(0, contents.indexOf("\n"))
+         );  
+        document.getElementById('filetype').innerHTML = ("" + f.type);
+        document.getElementById('filesize').innerHTML = f.size;
+        document.getElementById('filecontents').innerHTML = contents;
+      }
+      r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }
+  }
+
+  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+</script>
+

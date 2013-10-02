@@ -1,0 +1,1790 @@
+diff --git a/appinventor/appengine/src/com/google/appinventor/client/youngandroid/YoungAndroidFormUpgrader.java b/appinventor/appengine/src/com/google/appinventor/client/youngandroid/YoungAndroidFormUpgrader.java
+old mode 100644
+new mode 100755
+index 1c6c6af..4343343
+--- a/appinventor/appengine/src/com/google/appinventor/client/youngandroid/YoungAndroidFormUpgrader.java
++++ b/appinventor/appengine/src/com/google/appinventor/client/youngandroid/YoungAndroidFormUpgrader.java
+@@ -529,6 +529,12 @@ public final class YoungAndroidFormUpgrader {
+       // The callback parameters speed and heading were added to Flung.
+       srcCompVersion = 7;
+     }
++    if (srcCompVersion < 8) {
++      // DrawCircle parameter names changed to centerx,centery, radius
++      // Touched parameter touchedSprite name changed to touchedAnySprite
++      // Dragged parameter draggedSprite name changed to draggedAnySprite
++      srcCompVersion = 8;
++    }
+     return srcCompVersion;
+   }
+ 
+diff --git a/appinventor/blocklyeditor/ploverConfig.js b/appinventor/blocklyeditor/ploverConfig.js
+index bdf4cc3..47c8027 100644
+--- a/appinventor/blocklyeditor/ploverConfig.js
++++ b/appinventor/blocklyeditor/ploverConfig.js
+@@ -68,6 +68,8 @@
+     "./src/field_parameter_flydown.js",
+     "./src/field_global_flydown.js",
+     "./src/field_procedure_flydown.js",
++    "./src/nameSet.js",
++    "./src/substitution.js",
+ 
+     //language files
+     './src/language/common/control.js',
+@@ -95,6 +97,7 @@
+ 
+     //versioning files
+     "./src/versioning/017_blocksOverhaul.js",
++    "./src/versioning/018_canvasNameChanges.js",
+ 
+     // Repl
+     "./src/replmgr.js"
+diff --git a/appinventor/blocklyeditor/src/field_lexical_variable.js b/appinventor/blocklyeditor/src/field_lexical_variable.js
+index 63560cd..08b121f 100644
+--- a/appinventor/blocklyeditor/src/field_lexical_variable.js
++++ b/appinventor/blocklyeditor/src/field_lexical_variable.js
+@@ -25,6 +25,19 @@
+ 
+ /**
+  * Lyn's History:
++ *  [lyn, 11/15-17/13] Overhauled parameter renaming:
++ *    + Refactored FieldLexicalVariable method getNamesInScope to have same named function that works on any block,
++ *      and a separate function getLexicalNamesInScope that works on any block
++ *    + Refactored monolithic renameParam into parts that are useful on their own
++ *    + Previously, renaming param from oldName to newName might require renaming newName itself
++ *      (adding a number to the end) to avoid renaming inner declarations that might be captured
++ *      by renaming oldName to newName. Now, there is a choice between this previous behavior and
++ *      a new behavior in which newName is *not* renamed and capture is avoided by renaming
++ *      the inner declarations when necessary.
++ *    + Created Blockly.Lexical.freeVariables for calculating free variables
++ *    + Created Blockly.Lexical.renameBound for renaming of boundVariables in declarations
++ *    + Created Blockly.Lexical.renameFree for renaming of freeVariables in declarations
++ *    + Created Blockly.LexicalVariable.stringListsEqual for testing equality of string lists.
+  *  [lyn, 10/28/13] Made identifier legality check more restrictive by removing arithmetic
+  *     and logical ops as possible identifier characters
+  *  [lyn, 10/27/13] Create legality filter & transformer for AI2 variable names
+@@ -136,6 +149,12 @@ Blockly.FieldLexicalVariable.getGlobalNames = function (optExcludedBlock) {
+   return globals;
+ }
+ 
++/**
++ * @this A FieldLexicalVariable instance
++ * @returns {list} A list of all global and lexical names in scope at the point of the getter/setter
++ *   block containing this FieldLexicalVariable instance. Global names are listed in sorted
++ *   order before lexical names in sorted order.
++ */
+ // [lyn, 12/24/12] Clean up of name prefixes; most work done earlier by paulmw
+ // [lyn, 11/29/12] Now handle params in control constructs
+ // [lyn, 11/18/12] Clarified structure of namespaces
+@@ -150,7 +169,32 @@ Blockly.FieldLexicalVariable.getGlobalNames = function (optExcludedBlock) {
+ // * If Blockly.showPrefixToUser is true, non-global names are prefixed with labels
+ //   specified in blocklyeditor.js
+ Blockly.FieldLexicalVariable.prototype.getNamesInScope = function () {
++  return Blockly.FieldLexicalVariable.getNamesInScope(this.block_);
++}
++
++/**
++ * @param block
++ * @returns {list} A list of all global and lexical names in scope at the given block.
++ *   Global names are listed in sorted order before lexical names in sorted order.
++ */
++// [lyn, 11/15/13] Refactored to work on any block
++Blockly.FieldLexicalVariable.getNamesInScope = function (block) {
+   var globalNames = Blockly.FieldLexicalVariable.getGlobalNames(); // from global variable declarations
++  // [lyn, 11/24/12] Sort and remove duplicates from namespaces
++  globalNames = Blockly.LexicalVariable.sortAndRemoveDuplicates(globalNames);
++  var allLexicalNames = Blockly.FieldLexicalVariable.getLexicalNamesInScope(block);
++  // Return a list of all names in scope: global names followed by lexical ones.
++  return globalNames.map( Blockly.prefixGlobalMenuName ).concat(allLexicalNames);
++}
++
++/**
++ * @param block
++ * @returns {list} A list of all lexical names (in sorted order) in scope at the point of the given block
++ *   If Blockly.usePrefixInYail is true, returns names prefixed with labels like "param", "local", "index";
++ *   otherwise returns unprefixed names.
++ */
++// [lyn, 11/15/13] Factored this out from getNamesInScope to work on any block
++Blockly.FieldLexicalVariable.getLexicalNamesInScope = function (block) {
+   var procedureParamNames = []; // from procedure/function declarations
+   var handlerParamNames = []; // from event handlers
+   var loopNames = []; // from for loops
+@@ -172,7 +216,7 @@ Blockly.FieldLexicalVariable.prototype.getNamesInScope = function () {
+     }
+   }
+   
+-  child = this.block_;
++  child = block;
+   if (child) {
+     parent = child.getParent();
+     if (parent) {
+@@ -213,9 +257,7 @@ Blockly.FieldLexicalVariable.prototype.getNamesInScope = function () {
+       }
+     }
+   }
+-  // [lyn, 11/24/12] Sort and remove duplicates from namespaces
+-  globalNames = Blockly.LexicalVariable.sortAndRemoveDuplicates(globalNames);
+-    
++
+   if(!Blockly.usePrefixInYail){ // Only a single namespace
+     allLexicalNames = procedureParamNames.concat(handlerParamNames)
+                                          .concat(loopNames)
+@@ -239,8 +281,7 @@ Blockly.FieldLexicalVariable.prototype.getNamesInScope = function () {
+        .concat(localNames.map( Blockly.possiblyPrefixMenuNameWith(Blockly.localNamePrefix) ));
+     allLexicalNames = Blockly.LexicalVariable.sortAndRemoveDuplicates(allLexicalNames);
+   }
+-  // Return a list of all names in scope: global names followed by lexical ones.
+-  return globalNames.map( Blockly.prefixGlobalMenuName ).concat(allLexicalNames);
++  return allLexicalNames;
+ }
+ 
+ /**
+@@ -383,7 +424,9 @@ Blockly.LexicalVariable.renameGlobal = function (newName) {
+         var block = blocks[i];
+         var renamingFunction = block.renameLexicalVar;
+         if (renamingFunction) {
+-            renamingFunction.call(block, "global " + oldName, "global " + newName);
++            renamingFunction.call(block,
++                                  Blockly.globalNamePrefix + Blockly.menuSeparator + oldName,
++                                  Blockly.globalNamePrefix + Blockly.menuSeparator + newName);
+         }
+       }
+     }
+@@ -391,6 +434,16 @@ Blockly.LexicalVariable.renameGlobal = function (newName) {
+   return newName;
+ };
+ 
++/**
++ * Rename the old name currently in this field to newName in the block assembly rooted
++ * at the source block of this field (where "this" names the field of interest).
++ * See the documentation for renameParamFromTo for more details.
++ * @param newName
++ * @returns {string} The (possibly changed version of) newName, which may be changed
++ *   to avoid variable capture with both external declarations (declared above the
++ *   declaration of this name) or internal declarations (declared inside the scope
++ *   of this name).
++ */
+ // [lyn, 11/19/12 (revised 10/11/13)]
+ // Rename procedure parameter, event parameter, local name, or loop index variable to a new name,
+ // avoiding variable capture in the scope of the param. Consistently renames all 
+@@ -401,7 +454,9 @@ Blockly.LexicalVariable.renameGlobal = function (newName) {
+ // [lyn, 10/26/13] Modified to replace sequences of internal spaces by underscores
+ // (none were allowed before), and to replace empty string by '_'.
+ // Without special handling of empty string, the connection between a declaration field and
+-// its references is lots.
++// its references is lost.
++//
++// [lyn, 11/15/13] Refactored monolithic renameParam into parts that are useful on their own
+ Blockly.LexicalVariable.renameParam = function (newName) {
+ 
+   var htmlInput = Blockly.FieldTextInput.htmlInput_;
+@@ -414,13 +469,134 @@ Blockly.LexicalVariable.renameParam = function (newName) {
+   // [lyn, 10/27/13] now check legality of identifiers
+   newName = Blockly.LexicalVariable.makeLegalIdentifier(newName);
+ 
+-  var sourceBlock = this.sourceBlock_; 
+-    // sourceBlock is block in which name is being changed. Can be one of:
+-    // * For procedure param: procedures_mutatorarg, procedures_defnoreturn, procedures_defreturn
+-    //   (last two added by lyn on 10/11/13).
+-    // * For local name: local_mutatorarg, local_declaration_statement, local_declaration_expression
+-    // * For loop name: controls_forEach, controls_forRange
+-    // * For event param, event handler block (new on 10/13/13)
++  // Default behavior consistent with previous behavior is to use "false" for last argument --
++  // I.e., will not rename inner declarations, but may rename newName
++  return Blockly.LexicalVariable.renameParamFromTo(this.sourceBlock_, oldName, newName, false);
++}
++
++/**
++ * [lyn, 11/15/13] Refactored from renameParam and extended.
++ * Rename oldName to newName in the block assembly rooted at this block
++ * (where "this" names the block of interest). The names may refer to any nonglobal
++ * parameter name (procedure parameter, event parameter, local name, or loop index variable).
++ * This function consistently renames all references to oldName by newName in all
++ * getter and setter blocks that refer to oldName, correctly handling inner declarations
++ * that use oldName. In cases where renaming oldName to newName would result in variable
++ * capture of newName by another declaration, such capture is avoided by either:
++ *    1. (If renameCapturables is true):  consistently renaming the capturing declarations
++ *       (by adding numbers to the end) so that they do not conflict with newName (or each other).
++ *    2. (If renameCapturables is false): renaming the proposed newName (by adding
++ *       numbers to the end) so that it does not conflict with capturing declarations).
++ * @param block  the root source block containing the parameter being renamed
++ * @param oldName
++ * @param newName
++ * @param renameCapturables in capture situations, determines whether capturing declarations
++ *   are renamed (true) or newName is renamed (false)
++ * @returns {string} if renameCapturables is true, returns the given newName; if renameCapturables
++ *   is false, returns the (possibly renamed version of) newName, which may be changed
++ *   to avoid variable capture with both external declarations (declared above the
++ *   declaration of this name) or internal declarations (declared inside the scope
++ *   of this name).
++ */
++Blockly.LexicalVariable.renameParamFromTo = function (block, oldName, newName, renameCapturables) {
++  if (renameCapturables) {
++    Blockly.LexicalVariable.renameParamRenamingCapturables(block, oldName, newName);
++    return newName;
++  } else {
++    return Blockly.LexicalVariable.renameParamWithoutRenamingCapturables(block, oldName, newName, []);
++  }
++}
++
++/**
++ * [lyn, 11/15/13] Created
++ * Rename oldName to newName in the block assembly rooted at this block.
++ * In the case where newName would be captured by an internal declaration,
++ *  consistently rename the declaration and all its uses to avoid variable capture.
++ * In the case where newName would be captured by an external declaration, throw an exception.
++ * @param sourceBlock  the root source block containing the declaration of oldName
++ * @param oldName
++ * @param newName
++ */
++Blockly.LexicalVariable.renameParamRenamingCapturables = function (sourceBlock, oldName, newName) {
++  var namesDeclaredHere = sourceBlock.declaredNames ? sourceBlock.declaredNames() : [];
++  if (namesDeclaredHere.indexOf(oldName) == -1) {
++    throw "Blockly.LexicalVariable.renamingCapturables: oldName " + oldName +
++        " is not in declarations {" + namesDeclaredHere.join(',') + "}";
++  }
++  if (newName !== oldName) { // Do nothing if names are the same
++    var namesDeclaredAbove = Blockly.FieldLexicalVariable.getNamesInScope(sourceBlock);
++    var declaredNames = namesDeclaredHere.concat(namesDeclaredAbove);
++    // Should really check which forbidden names are free vars in the body of declBlock.
++    if (declaredNames.indexOf(newName) != -1) {
++      throw "Blockly.LexicalVariable.renameParamRenamingCapturables: newName " + newName +
++            " is in existing declarations {" + declaredNames.join(',') + "}";
++    } else {
++      if (sourceBlock.renameBound) {
++        var boundSubstitution = Blockly.Substitution.simpleSubstitution(oldName,newName);
++        var freeSubstitution = new Blockly.Substitution(); // an empty substitution
++        sourceBlock.renameBound(boundSubstitution, freeSubstitution);
++      } else {
++        throw "Blockly.LexicalVariable.renameParamRenamingCapturables: block " + block.type +
++               " is not a declaration block."
++      }
++    }
++  }
++}
++
++/**
++ * [lyn, 11/15/13] Created
++ * Rename all free variables in this block according to the given renaming
++ * @param block: any block
++ * @param freeRenaming: a dictionary (i.e., object) mapping old names to new names
++ */
++Blockly.LexicalVariable.renameFree = function (block, freeSubstitution) {
++  if (block) { // If block is falsey, do nothing.
++    if (block.renameFree) {  // should be defined on every declaration block
++      block.renameFree(freeSubstitution);
++    } else {
++      block.getChildren().map( function(blk) { Blockly.LexicalVariable.renameFree(blk, freeSubstitution); } );
++    }
++  }
++}
++
++/**
++ * [lyn, 11/15/13] Created
++ * Return a nameSet of all free variables in the given block
++ * @param block
++ * @returns (NameSet) set of all free names in block
++ */
++Blockly.LexicalVariable.freeVariables = function (block) {
++  if (!block) {
++    return new NameSet();
++  } else if (block.freeVariables) { // should be defined on every declaration block
++    return block.freeVariables();
++  } else {
++    var nameSets = block.getChildren().map( function(blk) { Blockly.LexicalVariable.freeVariables(blk); } );
++    return Blockly.NameSet.unionAll(nameSets);
++  }
++}
++
++/**
++ * [lyn, 11/15/13] Refactored from renameParam
++ * Rename oldName to newName in the block assembly rooted at this block.
++ * In the case where newName would be captured by internal or external declaration,
++ * change it to a name (with a number suffix) that would not be captured.
++ * @param sourceBlock  the root source block containing the declaration of oldName
++ * @param oldName
++ * @param newName
++ *  @returns {string} the (possibly renamed version of) newName, which may be changed
++ *   to avoid variable capture with both external declarations (declared above the
++ *   declaration of this name) or internal declarations (declared inside the scope
++ *   of this name).
++ */
++Blockly.LexicalVariable.renameParamWithoutRenamingCapturables = function (sourceBlock, oldName, newName, OKNewNames) {
++  var namesDeclaredHere = sourceBlock.declaredNames ? sourceBlock.declaredNames() : [];
++  /*
++  if (namesDeclaredHere.indexOf(oldName) == -1) {
++    throw "Blockly.LexicalVariable.renamingCapturables: oldName " + oldName +
++        " is not in declarations {" + namesDeclaredHere.join(',') + "}";
++  }
++  */
+   var sourcePrefix = "";
+   if (Blockly.showPrefixToUser) {
+     if (sourceBlock.type == "procedures_mutatorarg"
+@@ -432,22 +608,91 @@ Blockly.LexicalVariable.renameParam = function (newName) {
+     } else if ( sourceBlock.type == "controls_forRange") {
+       sourcePrefix = Blockly.loopRangeParameterPrefix;
+     } else if (sourceBlock.type == "local_declaration_statement"
+-               || sourceBlock.type == "local_declaration_expression" 
+-               || sourceBlock.type == "local_mutatorarg") {
++        || sourceBlock.type == "local_declaration_expression"
++        || sourceBlock.type == "local_mutatorarg") {
+       sourcePrefix = Blockly.localNamePrefix;
+     }
+   }
+-  var inScopeBlocks = []; // list of root blocks in scope of oldName and in which 
+-                          // renaming must take place. 
++  var helperInfo = Blockly.LexicalVariable.renameParamWithoutRenamingCapturablesInfo(sourceBlock, oldName, sourcePrefix);
++  var blocksToRename = helperInfo[0];
++  var capturables = helperInfo[1];
+   var declaredNames = []; // declared names in source block, with which newName cannot conflict
+   if (sourceBlock.declaredNames) {
+     declaredNames = sourceBlock.declaredNames();
+     // Remove oldName from list of names. We can rename oldName to itself if we desire!
+     var oldIndex = declaredNames.indexOf(oldName);
+     if (oldIndex != -1) {
+-      declaredNames.splice(oldIndex,1);
++        declaredNames.splice(oldIndex,1);
++    }
++    // Remove newName from list of declared names if it's in OKNewNames.
++    if (OKNewNames.indexOf(newName) != -1) {
++        var newIndex = declaredNames.indexOf(newName);
++        if (newIndex != -1) {
++            declaredNames.splice(newIndex,1);
++        }
+     }
+   }
++  var conflicts = Blockly.LexicalVariable.sortAndRemoveDuplicates(capturables.concat(declaredNames));
++  // Potentially rename declaration against conflicts
++  newName = Blockly.FieldLexicalVariable.nameNotIn(newName, conflicts);
++  /* console.log("LYN: rename Param: oldName = " + oldName + "; newName = " + newName
++   + "; sourcePrefix = " + sourcePrefix
++   + "; capturables = " + JSON.stringify(capturables)
++   + "; declaredNames = " + JSON.stringify(declaredNames)
++   + "; conflicts = " + JSON.stringify(conflicts)
++   + "; blocksToRename = " + JSON.stringify(blocksToRename.map( function(elt) { return elt.type; })));
++   */
++  if (! (newName === oldName)) { // Special case: if newName is oldName, we're done!
++    // [lyn, 12/27/2012] I don't understand what this code is for.
++    //  I think it had something to do with locals that has now been repaired?
++    /* var oldNameInDeclaredNames = false;
++     for (var i = 0; i < declaredNames.length; i++) {
++     if(oldName === declaredNames[i]){
++     oldNameInDeclaredNames = true;
++     }
++     }
++     if(!oldNameInDeclaredNames){
++     */
++    var oldNameValid = (declaredNames.indexOf(oldName) != -1);
++    if(!oldNameValid) {
++      // Rename getters and setters
++      for (var i = 0; i < blocksToRename.length; i++) {
++        var block = blocksToRename[i];
++        var renamingFunction = block.renameLexicalVar;
++        if (renamingFunction) {
++          renamingFunction.call(block,
++              (Blockly.possiblyPrefixMenuNameWith(sourcePrefix))(oldName),
++              (Blockly.possiblyPrefixMenuNameWith(sourcePrefix))(newName));
++        }
++      }
++    }
++  }
++  return newName;
++}
++
++/**
++ * [lyn, 11/15/13] Refactored from renameParam()
++ * @param oldName
++ * @returns {pair} Returns a pair of
++ *   (1) All getter/setter blocks that reference oldName
++ *   (2) A list of all non-global names to which oldName cannot be renamed because doing
++ *       so would change the reference "wiring diagram" and thus the meaning
++ *       of the program. This is the union of:
++ *          (a) all names declared between the declaration of oldName and a reference to old name; and
++ *          (b) all names declared in a parent of the oldName declaration that are referenced in the scope of oldName.
++ *       In the case where prefixes are used (e.g., "param a", "index i, "local x")
++ *       this is a list of *unprefixed* names.
++ */
++Blockly.LexicalVariable.renameParamWithoutRenamingCapturablesInfo = function (sourceBlock, oldName, sourcePrefix) {
++  // var sourceBlock = this; // The block containing the declaration of oldName
++    // sourceBlock is block in which name is being changed. Can be one of:
++    // * For procedure param: procedures_mutatorarg, procedures_defnoreturn, procedures_defreturn
++    //   (last two added by lyn on 10/11/13).
++    // * For local name: local_mutatorarg, local_declaration_statement, local_declaration_expression
++    // * For loop name: controls_forEach, controls_forRange
++    // * For event param, event handler block (new on 10/13/13)
++  var inScopeBlocks = []; // list of root blocks in scope of oldName and in which
++                          // renaming must take place.
+   if (sourceBlock.blocksInScope) { // Find roots of blocks in scope. 
+     inScopeBlocks = sourceBlock.blocksInScope();
+   }
+@@ -464,7 +709,7 @@ Blockly.LexicalVariable.renameParam = function (newName) {
+                         // of the program. This is the union of:
+                         // (1) all names declared between the declaration of oldName and a reference
+                         //     to old name; and
+-                        // (2) all names declared in a parent of the oldName declaration that 
++                        // (2) all names declared in a parent of the oldName declaration that
+                         //     are referenced in the scope of oldName.
+                         // In the case where prefixes are used (e.g., "param a", "index i, "local x")
+                         // this is a list of *unprefixed* names. 
+@@ -473,42 +718,7 @@ Blockly.LexicalVariable.renameParam = function (newName) {
+     capturables = capturables.concat(referenceResults[r][1]);
+   }
+   capturables = Blockly.LexicalVariable.sortAndRemoveDuplicates(capturables);
+-  var conflicts = Blockly.LexicalVariable.sortAndRemoveDuplicates(capturables.concat(declaredNames));
+-  // Potentially rename declaration against capturables
+-  newName = Blockly.FieldLexicalVariable.nameNotIn(newName, conflicts);
+-  /* console.log("LYN: rename Param: oldName = " + oldName + "; newName = " + newName 
+-            + "; sourcePrefix = " + sourcePrefix
+-            + "; capturables = " + JSON.stringify(capturables)
+-            + "; declaredNames = " + JSON.stringify(declaredNames)
+-            + "; conflicts = " + JSON.stringify(conflicts)
+-            + "; blocksToRename = " + JSON.stringify(blocksToRename.map( function(elt) { return elt.type; })));
+-  */
+-  if (! (newName === oldName)) { // Special case: if newName is oldName, we're done!
+-    // [lyn, 12/27/2012] I don't understand what this code is for.
+-    //  I think it had something to do with locals that has now been repaired? 
+-    /* var oldNameInDeclaredNames = false;
+-      for (var i = 0; i < declaredNames.length; i++) {
+-      if(oldName === declaredNames[i]){
+-        oldNameInDeclaredNames = true;
+-      }
+-    }
+-    if(!oldNameInDeclaredNames){ 
+-    */
+-    var oldNameValid = (declaredNames.indexOf(oldName) != -1);
+-    if(!oldNameValid) {
+-      // Rename getters and setters
+-      for (var i = 0; i < blocksToRename.length; i++) {
+-        var block = blocksToRename[i];
+-        var renamingFunction = block.renameLexicalVar;
+-        if (renamingFunction) {
+-          renamingFunction.call(block,
+-                                (Blockly.possiblyPrefixMenuNameWith(sourcePrefix))(oldName),
+-                                (Blockly.possiblyPrefixMenuNameWith(sourcePrefix))(newName));
+-        }
+-      }
+-    }
+-  }
+-  return newName;
++  return [blocksToRename, capturables];
+ }
+ 
+ /**
+@@ -520,7 +730,7 @@ Blockly.LexicalVariable.renameParam = function (newName) {
+  *   <first> = letter U charsIn("_$?~@")
+  *   <rest> = <first> U digit
+  *
+- *   Note: an earlier verison also allowed characters in "!&%.^/+-*>=<",
++ *   Note: an earlier version also allowed characters in "!&%.^/+-*>=<",
+  *   but we decided to remove these because (1) they may be used for arithmetic,
+  *   logic, and selection infix operators in a future AI text language, and we don't want
+  *   things like a+b, !c, d.e to be ambiguous between variables and other expressions.
+@@ -692,3 +902,24 @@ Blockly.LexicalVariable.getNextTargetBlock = function (block) {
+   }
+ }
+ 
++/**
++ * [lyn, 11/16/13] Created
++ * @param strings1: an array of strings
++ * @param strings2: an array of strings
++ * @returns true iff strings1 and strings2 have the same names in the same order; false otherwise
++ */
++Blockly.LexicalVariable.stringListsEqual = function (strings1, strings2) {
++  var len1 = strings1.length;
++  var len2 = strings2.length;
++  if (len1 !== len2) {
++    return false;
++  } else {
++    for (var i = 0; i < len1; i++) {
++      if (strings1[i] !== strings2[i]) {
++        return false;
++      }
++    }
++  }
++  return true; // get here iff lists are equal
++}
++
+diff --git a/appinventor/blocklyeditor/src/language/common/control.js b/appinventor/blocklyeditor/src/language/common/control.js
+index 3f3d283..e81c07b 100644
+--- a/appinventor/blocklyeditor/src/language/common/control.js
++++ b/appinventor/blocklyeditor/src/language/common/control.js
+@@ -26,6 +26,7 @@
+ 
+ /**
+  * Lyn's History:
++ * [lyn, 11/16-17/13] Added freeVariables, renameFree, and renameBound to forRange and forEach loops
+  * [lyn, 10/27/13] Specify direction of flydowns
+  * [lyn, 10/25/13] Made collapsed block labels more sensible.
+  * [lyn, 10/10-14/13]
+@@ -308,6 +309,42 @@ Blockly.Language.controls_forRange = {
+       this.setTitleValue(newName, 'VAR');
+     }
+   },
++  renameBound: function (boundSubstitution, freeSubstitution) {
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('START'), freeSubstitution);
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('END'), freeSubstitution);
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('STEP'), freeSubstitution);
++    var oldIndexVar = this.getTitleValue('VAR');
++    var newIndexVar = boundSubstitution.apply(oldIndexVar);
++    if (newIndexVar !== oldIndexVar) {
++      this.renameVar(oldIndexVar, newIndexVar);
++      var indexSubstitution = Blockly.Substitution.simpleSubstitution(oldIndexVar, newIndexVar);
++      var newFreeSubstitution = freeSubstitution.extend(indexSubstitution);
++      Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('DO'), newFreeSubstitution);
++    } else {
++      Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('DO'), freeSubstitution);
++    }
++  },
++  renameFree: function (freeSubstitution) {
++    var indexVar = this.getTitleValue('VAR');
++    var bodyFreeVars = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('DO'));
++    bodyFreeVars.delete(indexVar);
++    var renamedBodyFreeVars = bodyFreeVars.renamed(freeSubstitution);
++    if (renamedBodyFreeVars.isMember(indexVar)) { // Variable capture!
++      var newIndexVar = Blockly.LexicalVariable.nameNotIn(indexVar, renamedBodyFreeVars.toList());
++      var boundSubstitution = Blockly.Substitution.simpleSubstitution(indexVar, newIndexVar);
++      this.renameBound(boundSubstitution, freeSubstitution);
++    } else {
++      this.renameBound({}, freeSubstitution);
++    }
++  },
++  freeVariables: function() { // return the free variables of this block
++    var result = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('DO'));
++    result.delete(this.getTitleValue('VAR')); // Remove bound index variable from body free vars
++    result.unite(Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('START')));
++    result.unite(Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('END')));
++    result.unite(Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('STEP')));
++    return result;
++  },
+   typeblock: [{ translatedName: Blockly.LANG_CONTROLS_FORRANGE_INPUT_ITEM }],
+   prepareCollapsedText: function(){
+     this.getTitle_('COLLAPSED_TEXT')
+@@ -369,6 +406,38 @@ Blockly.Language.controls_forEach = {
+       this.setTitleValue(newName, 'VAR');
+     }
+   },
++  renameBound: function (boundSubstitution, freeSubstitution) {
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('LIST'), freeSubstitution);
++    var oldIndexVar = this.getTitleValue('VAR');
++    var newIndexVar = boundSubstitution.apply(oldIndexVar);
++    if (newIndexVar !== oldIndexVar) {
++      this.renameVar(oldIndexVar, newIndexVar);
++      var indexSubstitution = Blockly.Substitution.simpleSubstitution(oldIndexVar, newIndexVar);
++      var newFreeSubstitution = freeSubstitution.extend(indexSubstitution);
++      Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('DO'), newFreeSubstitution);
++    } else {
++      Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('DO'), freeSubstitution);
++    }
++  },
++  renameFree: function (freeSubstitution) {
++    var indexVar = this.getTitleValue('VAR');
++    var bodyFreeVars = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('DO'));
++    bodyFreeVars.delete(indexVar);
++    var renamedBodyFreeVars = bodyFreeVars.renamed(freeSubstitution);
++    if (renamedBodyFreeVars.isMember(indexVar)) { // Variable capture!
++      var newIndexVar = Blockly.LexicalVariable.nameNotIn(indexVar, renamedBodyFreeVars.toList());
++      var boundSubstitution = Blockly.Substitution.simpleSubstitution(indexVar, newIndexVar);
++      this.renameBound(boundSubstitution, freeSubstitution);
++    } else {
++      this.renameBound({}, freeSubstitution);
++    }
++  },
++  freeVariables: function() { // return the free variables of this block
++    var result = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('DO'));
++    result.delete(this.getTitleValue('VAR')); // Remove bound index variable from body free vars
++    result.unite(Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('LIST')));
++    return result;
++  },
+   typeblock: [{ translatedName: Blockly.LANG_CONTROLS_FOREACH_INPUT_ITEM }],
+   prepareCollapsedText: function(){
+     this.getTitle_('COLLAPSED_TEXT')
+diff --git a/appinventor/blocklyeditor/src/language/common/lexical-variables.js b/appinventor/blocklyeditor/src/language/common/lexical-variables.js
+index c560a6f..f4ffd7b 100644
+--- a/appinventor/blocklyeditor/src/language/common/lexical-variables.js
++++ b/appinventor/blocklyeditor/src/language/common/lexical-variables.js
+@@ -25,6 +25,10 @@
+ 
+ /**
+  * Lyn's History:
++ * [lyn, 11/16-17/13]
++ *   + Added freeVariables, renameFree, and renameBound to local declarations
++ *   + Added freeVariables and renameFree to getters and setters
++ *   + Added renameVar and renameVars to local declaration
+  * [lyn, 10/27/13]
+  *   + Modified local declaration parameter flydowns so editing the name changes corresponding name in an open mutator.
+  *   + Changed local declaration compose() to rebuild inputs only if local names have changed.
+@@ -169,6 +173,29 @@ Blockly.Language.lexical_variable_get = {
+         this.setTitleValue(newName, 'VAR');
+     }
+   },
++  renameFree: function (freeSubstitution) {
++    var prefixPair = Blockly.unprefixName(this.getTitleValue('VAR'));
++    var prefix = prefixPair[0];
++    // Only rename lexical (nonglobal) names
++    if (prefix !== Blockly.globalNamePrefix) {
++      var oldName = prefixPair[1];
++      var newName = freeSubstitution.apply(oldName);
++      if (newName !== oldName) {
++        this.renameLexicalVar(oldName, newName);
++      }
++    }
++  },
++  freeVariables: function() { // return the free lexical variables of this block
++    var prefixPair = Blockly.unprefixName(this.getTitleValue('VAR'));
++    var prefix = prefixPair[0];
++    // Only return lexical (nonglobal) names
++    if (prefix !== Blockly.globalNamePrefix) {
++      var oldName = prefixPair[1];
++      return new NameSet([oldName]);
++    } else {
++      return new NameSet();
++    }
++  },
+   typeblock: [{ translatedName: Blockly.LANG_VARIABLES_GET_TITLE_GET + ' variable' }],
+   prepareCollapsedText: function(){
+     this.getTitle_('COLLAPSED_TEXT')
+@@ -204,6 +231,30 @@ Blockly.Language.lexical_variable_set = {
+   },
+   onchange: Blockly.Language.lexical_variable_get.onchange,
+   renameLexicalVar: Blockly.Language.lexical_variable_get.renameLexicalVar,
++  renameFree: function (freeSubstitution) {
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('VALUE'), freeSubstitution);
++    var prefixPair = Blockly.unprefixName(this.getTitleValue('VAR'));
++    var prefix = prefixPair[0];
++    // Only rename lexical (nonglobal) names
++    if (prefix !== Blockly.globalNamePrefix) {
++      var oldName = prefixPair[1];
++      var newName = freeSubstitution.apply(oldName);
++      if (newName !== oldName) {
++        this.renameLexicalVar(oldName, newName);
++      }
++    }
++  },
++  freeVariables: function() { // return the free lexical variables of this block
++    var result = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('VALUE'));
++    var prefixPair = Blockly.unprefixName(this.getTitleValue('VAR'));
++    var prefix = prefixPair[0];
++    // Only return lexical (nonglobal) names
++    if (prefix !== Blockly.globalNamePrefix) {
++      var oldName = prefixPair[1];
++      result.insert(oldName);
++    }
++    return result;
++  },
+   typeblock: [{ translatedName: Blockly.LANG_VARIABLES_SET_TITLE_SET + ' variable' }],
+   prepareCollapsedText: function(){
+     this.getTitle_('COLLAPSED_TEXT')
+@@ -272,9 +323,9 @@ Blockly.Language.local_declaration_statement = {
+         }
+       }
+     }
+-    this.addDeclarationInputs_(this.localNames_); // add declarations; inits are undefined
++    this.updateDeclarationInputs_(this.localNames_); // add declarations; inits are undefined
+   },
+-  addDeclarationInputs_: function(names, inits) {
++  updateDeclarationInputs_: function(names, inits) {
+     // Modify this block to replace existing initializers by new declaration inputs created from names and inits.
+     // If inits is undefined, treat all initial expressions as undefined.
+     // Keep existing body and collapsed inputs at end of input list.
+@@ -383,13 +434,13 @@ Blockly.Language.local_declaration_statement = {
+     }
+ 
+     // Reconstruct inputs only if local list has changed
+-    if (this.localNames_.join(',') !== newLocalNames.join(',')) {
++    if (!Blockly.LexicalVariable.stringListsEqual(this.localNames_, newLocalNames)) {
+ 
+       // Switch off rendering while the block is rebuilt.
+       // var savedRendered = this.rendered;
+       // this.rendered = false;
+ 
+-      this.addDeclarationInputs_(newLocalNames, initializers);
++      this.updateDeclarationInputs_(newLocalNames, initializers);
+ 
+       // Restore rendering and show the changes.
+       // this.rendered = savedRendered;
+@@ -433,35 +484,84 @@ Blockly.Language.local_declaration_statement = {
+   declaredNames: function () { // Interface with Blockly.LexicalVariable.renameParam
+     return this.getVars();
+   },
++  initializerConnections: function() { // [lyn, 11/16/13 ] Return all the initializer connections
++    var connections = [];
++    for (var i = 0, input; input = this.getInput('DECL' + i); i++) {
++      connections.push(input.connection && input.connection.targetConnection);
++    }
++    return connections;
++  },
+   blocksInScope: function () { // Interface with Blockly.LexicalVariable.renameParam
+     var doBody = this.getInputTargetBlock(this.bodyInputName); // *** [lyn, 11/24/12] This will go away with DO-AND-RETURN block
+     var doBodyList = (doBody && [doBody]) || []; // List of non-null doBody or empty list for null doBody
+     return doBodyList; // List of non-null body elements.
+   },
+   renameVar: function(oldName, newName) {
+-    // *** [lyn, 11/07/12] Still need to handle renaming of local variable names
+-        /*
+-    var change = false;
+-    for (var x = 0; x < this.arguments_.length; x++) {
+-      if (Blockly.Names.equals(oldName, this.arguments_[x])) {
+-        this.arguments_[x] = newName;
+-        change = true;
+-      }
+-    }
+-    if (change) {
+-      this.updateParams_();
++    this.renameVars(Blockly.Substitution.simpleSubstitution(oldName,newName));
++  },
++  renameVars: function(substitution) { // substitution is a dict (i.e., object) mapping old names to new ones
++    var localNames = this.declaredNames();
++    var renamedLocalNames = substitution.map(localNames);
++    if (!Blockly.LexicalVariable.stringListsEqual(renamedLocalNames, localNames)) {
++      var initializerConnections = this.initializerConnections();
++      this.updateDeclarationInputs_(renamedLocalNames, initializerConnections);
+       // Update the mutator's variables if the mutator is open.
+       if (this.mutator.isVisible_()) {
+         var blocks = this.mutator.workspace_.getAllBlocks();
+         for (var x = 0, block; block = blocks[x]; x++) {
+-          if (block.type == 'local_mutatorarg' &&
+-              Blockly.Names.equals(oldName, block.getTitleValue('NAME'))) {
+-            block.setTitleValue(newName, 'NAME');
++          if (block.type == 'procedures_mutatorarg') {
++            var oldName = block.getTitleValue('NAME');
++            var newName = substitution.appy(oldName);
++            if (newName !== oldName) {
++              block.setTitleValue(newName, 'NAME');
++            }
+           }
+         }
+       }
+     }
+-        */
++  },
++  renameBound: function (boundSubstitution, freeSubstitution) {
++    var localNames = this.declaredNames();
++    for (var i = 0; i < localNames.length; i++) {
++      // This is LET semantics, not LET* semantics, and needs to change!
++      Blockly.LexicalVariable.renameFree(this.getInputTargetBlock('DECL'+i), freeSubstitution);
++    }
++    var paramSubstitution = boundSubstitution.restrictDomain(localNames);
++    this.renameVars(paramSubstitution);
++    var newFreeSubstitution = freeSubstitution.extend(paramSubstitution);
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock(this.bodyInputName), newFreeSubstitution);
++  },
++  renameFree: function (freeSubstitution) {
++    // This is LET semantics, not LET* semantics, and needs to change!
++    var localNames = this.declaredNames();
++    var bodyFreeVars = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock(this.bodyInputName));
++    bodyFreeVars.subtract(new NameSet(localNames));
++    var renamedFreeVars = bodyFreeVars.renamed(freeSubstitution);
++    var capturedVars = renamedFreeVars.intersection(new NameSet(localNames));
++    if (! capturedVars.isEmpty()) { // Case where some names are captured!
++      // Must consistenty rename declarations and uses of capturedFreeVars with
++      // names that do not conflict with renamedFreeVars, localNames, or each other.
++      var forbiddenNames = localNames.union(renamedFreeVars).toList();
++      var boundBindings = {};
++      for (var i= 0, capturedVar; capturedVar = capturedVars[i]; i++) {
++        var newCapturedVar = Blockly.LexicalVariable.nameNotIn(capturedVar, forbiddenNames);
++        boundBindings[capturedVar] = newCapturedVar;
++        forbiddeNames.push(newCapturedVar);
++      }
++      this.renameBound(new Blockly.Substitution(boundBindings), freeSubstitution);
++    } else {
++      this.renameBound({}, freeSubstitution);
++    }
++  },
++  freeVariables: function() { // return the free lexical variables of this block
++    var result = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock(this.bodyInputName));
++    var localNames = this.declaredNames();
++    result.difference(new NameSet(declareNames)); // This is LET semantics, not LET* semantics, but should be changed!
++    var numDecls = localNames.length;
++    for (var i = 0; i < numDecls; i++) {
++      result.union(Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock('DECL'+i)));
++    }
++    return result;
+   },
+   //TODO (user) this has not been internationalized yet
+   typeblock: [{ translatedName: 'initialize local in do' }],
+@@ -497,7 +597,7 @@ Blockly.Language.local_declaration_expression = {
+   onchange: Blockly.WarningHandler.checkErrors,
+   mutationToDom: Blockly.Language.local_declaration_statement.mutationToDom,
+   domToMutation: Blockly.Language.local_declaration_statement.domToMutation,
+-  addDeclarationInputs_: Blockly.Language.local_declaration_statement.addDeclarationInputs_,
++  updateDeclarationInputs_: Blockly.Language.local_declaration_statement.updateDeclarationInputs_,
+   parameterFlydown: Blockly.Language.local_declaration_statement.parameterFlydown,
+   blocksInScope: Blockly.Language.local_declaration_statement.blocksInScope,
+   decompose: Blockly.Language.local_declaration_statement.decompose,
+@@ -506,7 +606,11 @@ Blockly.Language.local_declaration_expression = {
+   saveConnections: Blockly.Language.local_declaration_statement.saveConnections,
+   getVars: Blockly.Language.local_declaration_statement.getVars,
+   declaredNames: Blockly.Language.local_declaration_statement.declaredNames,
+-  renameVar: Blockly.Language.local_declaration_statement.renameVar,
++  renameVar: Blockly.Language.local_declaration_statement.renameVars,
++  renameVars: Blockly.Language.local_declaration_statement.renameVar,
++  renameBound: Blockly.Language.local_declaration_statement.renameBound,
++  renameFree: Blockly.Language.local_declaration_statement.renameFree,
++  freeVariables: Blockly.Language.local_declaration_statement.freeVariables,
+   //TODO (user) this has not been internationalized yet
+   typeblock: [{ translatedName: 'initialize local in return' }],
+   prepareCollapsedText: function(){
+diff --git a/appinventor/blocklyeditor/src/language/common/procedures.js b/appinventor/blocklyeditor/src/language/common/procedures.js
+index ce027c8..7149507 100644
+--- a/appinventor/blocklyeditor/src/language/common/procedures.js
++++ b/appinventor/blocklyeditor/src/language/common/procedures.js
+@@ -25,6 +25,14 @@
+ 
+ /**
+  * Lyn's Change History:
++ * [lyn, 11/16-17/13]
++ *   + Added freeVariables, renameFree, and renameBound to procedure declarations
++ *   + Added renameVars for procedure declarations, which allows renaming multiple parameters simultaneously
++ *   + Modified updateParams_ to accept optional params argument
++ *   + Introduced bodyInputName field for procedure declarations ('STACK' for procedures_defnoreturn;
++ *     'RETURN' for procedures_return), and use this to share more methods between the two kinds
++ *     of procedure declarations.
++ *   + Replaced inlined string list equality tests by new Blockly.LexicalVariable.stringListsEqual
+  * [lyn, 10/28/13]
+  *   + Fixed a missing change of Blockly.Procedures.rename by Blockly.AIProcedure.renameProcedure
+  *   + I was wrong about re-rendering not being needed in updatedParams_!
+@@ -33,7 +41,7 @@
+  * [lyn, 10/27/13]
+  *   + Fix bug in list of callers in flyout by simplifying domToMutation for procedure callers.
+  *     This should never look for associated declaration, but just take arguments from given xml.
+- *   + Removed render() call from updateParams. Seems unnecessary. <== I WAS WRONG. SEE 10/28/13 NOTE
++ *   + Removed render() call from updateParams_. Seems unnecessary. <== I WAS WRONG. SEE 10/28/13 NOTE
+  *   + Specify direction of flydowns
+  *   + Replaced Blockly.Procedures.rename by Blockly.AIProcedure.renameProcedure in proc decls
+  * [lyn, 10/26/13] Modify procedure parameter changeHandler to propagate name changes to caller arg labels
+@@ -69,6 +77,7 @@ Blockly.Language.procedures_defnoreturn = {
+   // Define a procedure with no return value.
+   category: 'Procedures',  // Procedures are handled specially.
+   helpUrl: Blockly.LANG_PROCEDURES_DEFNORETURN_HELPURL,
++  bodyInputName: 'STACK',
+   init: function() {
+     this.setColour(Blockly.PROCEDURE_CATEGORY_HUE);
+     var name = Blockly.Procedures.findLegalName(
+@@ -94,7 +103,14 @@ Blockly.Language.procedures_defnoreturn = {
+     this.arguments_ = this.declaredNames(); // ensure arguments_ is in sync with paramFlydown fields
+     Blockly.WarningHandler.checkErrors.call(this); // handle any new errors
+   },
+-  updateParams_: function() {  // make rendered block reflect the parameter names currently in this.arguments_
++  updateParams_: function(opt_params) {
++    // [lyn, 11/17/13] Added optional opt_params argument:
++    //    If its falsey (null or undefined), use the existing this.arguments_ list
++    //    Otherwise, replace this.arguments_ by opt_params
++    // In either case, make rendered block reflect the parameter names in this.arguments_
++    if (opt_params) {
++      this.arguments_ = opt_params;
++    }
+     // Check for duplicated arguments.
+     // [lyn 10/10/13] Note that in blocks edited within AI2, duplicate parameter names should never occur
+     //    because parameters are renamed to avoid duplication. But duplicates might show up
+@@ -291,14 +307,14 @@ Blockly.Language.procedures_defnoreturn = {
+     return container;
+   },
+   domToMutation: function(xmlElement) {
+-    this.arguments_ = [];
++    var params = []
+     for (var x = 0, childNode; childNode = xmlElement.childNodes[x]; x++) {
+       if (childNode.nodeName.toLowerCase() == 'arg') {
+-        this.arguments_.push(childNode.getAttribute('name'));
++        params.push(childNode.getAttribute('name'));
+       }
+     }
+     this.horizontalParameters = xmlElement.getAttribute('vertical_parameters') !== "true";
+-    this.updateParams_();
++    this.updateParams_(params);
+   },
+   decompose: function(workspace) {
+     var containerBlock = new Blockly.Block(workspace,
+@@ -326,12 +342,11 @@ Blockly.Language.procedures_defnoreturn = {
+     return containerBlock;
+   },
+   compose: function(containerBlock) {
+-    var prevArguments = this.arguments_;
+-    this.arguments_ = [];
++    var params = [];
+     this.paramIds_ = [];
+     var paramBlock = containerBlock.getInputTargetBlock('STACK');
+     while (paramBlock) {
+-      this.arguments_.push(paramBlock.getTitleValue('NAME'));
++      params.push(paramBlock.getTitleValue('NAME'));
+       this.paramIds_.push(paramBlock.id);
+       paramBlock = paramBlock.nextConnection &&
+           paramBlock.nextConnection.targetBlock();
+@@ -344,8 +359,8 @@ Blockly.Language.procedures_defnoreturn = {
+     // );
+     // [lyn, 11/24/12] Note: update params updates param list in proc declaration,
+     // but renameParam updates procedure body appropriately.
+-    if (prevArguments.join(',') !== this.arguments_.join(',')) { // Only need updates if param list has changed
+-      this.updateParams_();
++    if (!Blockly.LexicalVariable.stringListsEqual(params, this.arguments_)) { // Only need updates if param list has changed
++      this.updateParams_(params);
+       Blockly.Procedures.mutateCallers(this.getTitleValue('NAME'),
+         this.workspace, this.arguments_, this.paramIds_);
+     }
+@@ -370,7 +385,9 @@ Blockly.Language.procedures_defnoreturn = {
+     // Return the name of the defined procedure,
+     // a list of all its arguments,
+     // and that it DOES NOT have a return value.
+-    return [this.getTitleValue('NAME'), this.arguments_, false];
++    return [this.getTitleValue('NAME'),
++            this.arguments_,
++            this.bodyInputName === 'RETURN']; // true for procedures that return values.
+   },
+   getVars: function() {
+     var names = []
+@@ -383,30 +400,52 @@ Blockly.Language.procedures_defnoreturn = {
+      return this.getVars();
+   },
+   renameVar: function(oldName, newName) {
+-    var change = false;
+-    for (var x = 0; x < this.arguments_.length; x++) {
+-      if (Blockly.Names.equals(oldName, this.arguments_[x])) {
+-        this.arguments_[x] = newName;
+-        change = true;
+-      }
+-    }
+-    if (change) {
+-      this.updateParams_();
++    this.renameVars(Blockly.Substitution.simpleSubstitution(oldName,newName));
++  },
++  renameVars: function(substitution) { // renaming is a dict (i.e., object) mapping old names to new ones
++    var oldParams = this.getParameters();
++    var newParams = substitution.map(oldParams);
++    if (!Blockly.LexicalVariable.stringListsEqual(oldParams, newParams)) {
++      this.updateParams_(newParams);
+       // Update the mutator's variables if the mutator is open.
+       if (this.mutator.isVisible_()) {
+         var blocks = this.mutator.workspace_.getAllBlocks();
+         for (var x = 0, block; block = blocks[x]; x++) {
+-          if (block.type == 'procedures_mutatorarg' &&
+-              Blockly.Names.equals(oldName, block.getTitleValue('NAME'))) {
+-            block.setTitleValue(newName, 'NAME');
++          if (block.type == 'procedures_mutatorarg') {
++            var oldName = block.getTitleValue('NAME');
++            var newName = substitution.apply(oldName);
++            if (newName !== oldName) {
++              block.setTitleValue(newName, 'NAME');
++            }
+           }
+         }
+       }
+     }
+   },
++  renameBound: function (boundSubstitution, freeSubstitution) {
++    var paramSubstitution = boundSubstitution.restrictDomain(this.declaredNames());
++    this.renameVars(paramSubstitution);
++    var newFreeSubstitution = freeSubstitution.extend(paramSubstitution);
++    Blockly.LexicalVariable.renameFree(this.getInputTargetBlock(this.bodyInputName), newFreeSubstitution);
++  },
++  renameFree: function (freeSubstitution) { // Should have no effect since only top-level procedures.
++    var freeVars = this.freeVariables(); // Calculate free variables, which should be empty,
++                                         // throwing exception if not.
++    // There should be no free variables, and so nothing to rename. Do nothing else.
++  },
++  freeVariables: function() { // return the free lexical variables of this block
++                              // Should return the empty set: something is wrong if it doesn't!
++    var result = Blockly.LexicalVariable.freeVariables(this.getInputTargetBlock(this.bodyInputName));
++    result.subtract(new NameSet(this.declaredNames()));
++    if (result.isEmpty()) {
++      return result;
++    } else {
++      throw "Violation of invariant: procedure declaration has nonempty free variables: " + result.toString();
++    }
++  },
+   // [lyn, 11/24/12] return list of procedure body (if there is one)
+   blocksInScope: function () {
+-    var body = this.getInputTargetBlock('STACK');
++    var body = this.getInputTargetBlock(this.bodyInputName);
+     return (body && [body]) || [];
+   },
+   typeblock: [{ translatedName: Blockly.LANG_PROCEDURES_DEFNORETURN_PROCEDURE +
+@@ -428,6 +467,7 @@ Blockly.Language.procedures_defreturn = {
+   // Define a procedure with a return value.
+   category: 'Procedures',  // Procedures are handled specially.
+   helpUrl: Blockly.LANG_PROCEDURES_DEFRETURN_HELPURL,
++  bodyInputName: 'RETURN',
+   init: function() {
+     this.setColour(Blockly.PROCEDURE_CATEGORY_HUE);
+     var name = Blockly.Procedures.findLegalName(
+@@ -457,23 +497,15 @@ Blockly.Language.procedures_defreturn = {
+   decompose: Blockly.Language.procedures_defnoreturn.decompose,
+   compose: Blockly.Language.procedures_defnoreturn.compose,
+   dispose: Blockly.Language.procedures_defnoreturn.dispose,
+-  getProcedureDef: function() {
+-    // Return the name of the defined procedure,
+-    // a list of all its arguments,
+-    // and that it DOES have a return value.
+-    return [this.getTitleValue('NAME'), this.arguments_, true];
+-  },
++  getProcedureDef: Blockly.Language.procedures_defnoreturn.getProcedureDef,
+   getVars: Blockly.Language.procedures_defnoreturn.getVars,
+   declaredNames: Blockly.Language.procedures_defnoreturn.declaredNames,
+   renameVar: Blockly.Language.procedures_defnoreturn.renameVar,
+-  blocksInScope: function () {
+-    /* var doBody = this.getInputTargetBlock('STACK'); */ // *** [lyn, 11/24/12] This will go away with DO-AND-RETURN block
+-    var returnBody = this.getInputTargetBlock('RETURN');
+-    // var doBodyList = (doBody && [doBody]) || []; // List of non-null doBody or empty list for null doBody
+-    var returnBodyList = (returnBody && [returnBody]) || []; // List of non-null returnBody or empty list for null returnBody
+-    // return doBodyList.concat(returnBodyList); // List of non-null body elements.
+-    return returnBodyList; // List of non-null body elements.
+-  },
++  renameVars: Blockly.Language.procedures_defnoreturn.renameVars,
++  renameBound: Blockly.Language.procedures_defnoreturn.renameBound,
++  renameFree: Blockly.Language.procedures_defnoreturn.renameFree,
++  freeVariables: Blockly.Language.procedures_defnoreturn.freeVariables,
++  blocksInScope: Blockly.Language.procedures_defnoreturn.blocksInScope,
+   typeblock: [{ translatedName: Blockly.LANG_PROCEDURES_DEFRETURN_PROCEDURE +
+       ' ' + Blockly.LANG_PROCEDURES_DEFRETURN_RETURN }],
+   prepareCollapsedText: function(){
+@@ -790,7 +822,7 @@ Blockly.Language.procedures_callnoreturn = {
+     if (!this.quarkArguments_ || startTracking) {
+       // Initialize tracking for this block.
+       this.quarkConnections_ = {};
+-      if (paramNames.join('\n') == this.arguments_.join('\n') || startTracking) {
++      if (Blockly.LexicalVariable.stringListsEqual(paramNames, this.arguments_) || startTracking) {
+         // No change to the parameters, allow quarkConnections_ to be
+         // populated with the existing connections.
+         this.quarkArguments_ = paramIds;
+diff --git a/appinventor/blocklyeditor/src/nameSet.js b/appinventor/blocklyeditor/src/nameSet.js
+new file mode 100644
+index 0000000..c3703b0
+--- /dev/null
++++ b/appinventor/blocklyeditor/src/nameSet.js
+@@ -0,0 +1,279 @@
++/**
++ * @fileoverview Represent sets of strings and numbers as JavaScript objects
++ *   with an elements field that is itself an object mapping each element to true.
++ * Note that ECMAScript 6 supports sets, but we cannot rely on sites using this recent a version
++ * @author fturbak@wellesley.edu (Lyn Turbak)
++ */
++'use strict';
++
++/**
++ * History:
++ * [lyn, 11/16/13] created
++ */
++
++goog.provide('Blockly.NameSet');
++
++/**
++ * Construct a set from a list. If no list is provided, construct the empty set.
++ */
++Blockly.NameSet = function(names) {
++  if (!names) {
++    names = [];
++  }
++  this.elements = {};
++  for (var i = 0, name; name = names[i]; i++) {
++    this.elements[name] = true;
++  }
++}
++
++/**
++ * Set membership
++ * @param x: any value
++ * @returns true if x is in set and false otherwise
++ */
++Blockly.NameSet.prototype.isMember = function(x) {
++  return !!this.elements[x]; // !! converts falsey to false
++}
++
++/**
++ * Set emptiness
++ * @returns true if set is empty and false otherwise.
++ */
++Blockly.NameSet.prototype.isEmpty = function() {
++  for(var elt in this.elements) {
++    return false;
++  }
++  return true;
++}
++
++/**
++ * Set size
++ * @returns the number of elements in the set
++ */
++Blockly.NameSet.prototype.size = function() {
++  var size = 0;
++  for(var elt in this.elements) {
++    size++;
++  }
++  return size;
++}
++
++/**
++ * Return a list (i.e. array) of names in this set, in lexicographic order.
++ */
++Blockly.NameSet.prototype.toList = function() {
++  var result = [];
++  for (var elt in this.elements) {
++    result.push(elt);
++  }
++  return result.sort();
++}
++
++/**
++ * @returns a string representation of this set.
++ */
++Blockly.NameSet.prototype.toString = function() {
++  return "Blockly.NameSet{" + this.toList().join(",")  + "}";
++}
++
++/**
++ * Return a copy of this set
++ */
++Blockly.NameSet.prototype.copy = function() {
++  var result = new Blockly.NameSet();
++  for (var elt in this.elements) {
++    result.insert(elt);
++  }
++  return result;
++}
++
++/**
++ * Change this set to have the same elements as otherSet
++ */
++Blockly.NameSet.prototype.mirror = function(otherSet) {
++  for (var elt in this.elements) {
++    delete this.elements[elt];
++  }
++  for (var elt in otherSet.elements) {
++    this.elements[elt] = true;
++  }
++}
++
++/************************************************************
++ * DESTRUCTIVE OPERATIONS
++ * Change the existing set
++ ************************************************************/
++
++/**
++ * Destructive set insertion
++ * Insert x into the set. Does not complain if x already in the set.
++ * @param x: any value
++ */
++Blockly.NameSet.prototype.insert = function(x) {
++  this.elements[x] = true;
++}
++
++/**
++ * Destructive set deletion.
++ * Removes x from the set. Does not complain if x not in the set.
++ * @param x: any value
++ */
++Blockly.NameSet.prototype.delete = function(x) {
++  delete this.elements[x];
++}
++
++/**
++ * Destructive set union
++ * Change this set to have the union of its elements with the elements of the other set
++ * @param otherSet: a NameSet
++ */
++Blockly.NameSet.prototype.unite = function(otherSet) {
++  for (var elt in otherSet.elements) {
++    this.elements[elt] = true;
++  }
++}
++
++/**
++ * Destructive set intersection
++ * Change this set to have the intersection of its elements with the elements of the other set
++ * @param otherSet: a NameSet
++ */
++Blockly.NameSet.prototype.intersect = function(otherSet) {
++  for (var elt in this.elements) {
++    if (!otherSet.elements[elt]) {
++      delete this.elements[elt];
++    }
++  }
++}
++
++/**
++ * Destructive set difference
++ * Change this set to have the difference of its elements with the elements of the other set
++ * @param otherSet: a NameSet
++ */
++Blockly.NameSet.prototype.subtract = function(otherSet) {
++  for (var elt in this.elements) {
++    if (otherSet.elements[elt]) {
++      delete this.elements[elt];
++    }
++  }
++}
++
++/**
++ * Destructive set renaming
++ * Modifies existing set to rename those elements that are in the given renaming.
++ * Since multiple elements may rename to the same element, this may reduce the
++ * size of the set.
++ * @param renaming: a substitution mapping old names to new names
++ *
++ */
++Blockly.NameSet.prototype.rename = function(substitution) {
++  this.mirror(this.renamed(substitution));
++}
++
++/************************************************************
++ * NONDESTRUCTIVE OPERATIONS
++ * Return new sets/lists/strings
++ ************************************************************/
++
++/**
++ * Nondestructive set insertion
++ * Set insertion. Insert x into the set. Does not complain if x already in the set.
++ * @param x: any value
++ */
++Blockly.NameSet.prototype.insertion = function(x) {
++  var result = this.copy();
++  result.insert(x);
++  return result;
++}
++
++/**
++ * Nondestructive set deletion.
++ * Returns a new set containing the elements of this set except for x.
++ * * @param x: any value
++ */
++Blockly.NameSet.prototype.deletion = function(x) {
++  var result = this.copy();
++  result.delete(x);
++  return result;
++}
++
++
++/**
++ * Nondestructive set union
++ * @param otherSet: a NameSet
++ * @returns a new set that is the union of this set and the other set.
++ */
++Blockly.NameSet.prototype.union = function(otherSet) {
++  var result = this.copy();
++  result.unite(otherSet);
++  return result;
++}
++
++/**
++ * Nondestructive set intersection
++ * @param otherSet: a NameSet
++ * @returns a new set that is the intersection of this set and the other set.
++ */
++Blockly.NameSet.prototype.intersection = function(otherSet) {
++  var result = this.copy();
++  result.intersect(otherSet);
++  return result;
++}
++
++/**
++ * Nondestructive set difference
++ * @param otherSet: a NameSet
++ * @returns a new set that is the differences of this set and the other set.
++ */
++Blockly.NameSet.prototype.difference = function(otherSet) {
++  var result = this.copy();
++  result.subtract(otherSet);
++  return result;
++}
++
++/**
++ * @param renaming: a substitution mapping old names to new names
++ * @returns a new set that renames the elements of this set using the given renaming.
++ * If a name is not in the dictionary, it is inserted unchange in the output set.
++ */
++Blockly.NameSet.prototype.renamed = function(substitution) {
++  var result = new Blockly.NameSet();
++  for (var elt in this.elements) {
++    var renamedElt = substitution.apply(elt);
++    if (renamedElt) {
++      result.insert(renamedElt);
++    } else {
++      result.insert(elt);
++    }
++  }
++  return result;
++}
++
++/**
++ * @param setList: an array of NameSets
++ * @returns a NameSet that is the union of all the given sets
++ */
++Blockly.NameSet.unionAll = function(setList) {
++  var result = new Blockly.NameSet();
++  for (var i = 0, oneSet; oneSet = setList[i]; i++) {
++    result.unite(oneSet)
++  }
++  return result;
++}
++
++/**
++ * @param setList: an array of NameSets
++ * @returns a NameSet that is the intersection of all the given sets
++ */
++Blockly.NameSet.intersectAll = function(setList) {
++  if (setList.length == 0) {
++    return new Blockly.NameSet();
++  } else {
++    var result = setList[0];
++    for (var i = 1, oneSet; oneSet = setList[i]; i++) {
++      result.intersect(oneSet)
++    }
++    return result;
++  }
++}
+diff --git a/appinventor/blocklyeditor/src/savefile.js b/appinventor/blocklyeditor/src/savefile.js
+index 5b1762c..90fca66 100644
+--- a/appinventor/blocklyeditor/src/savefile.js
++++ b/appinventor/blocklyeditor/src/savefile.js
+@@ -13,9 +13,10 @@ Blockly.SaveFile.load = function(blocksContent) {
+   // We leave it to our caller to catch JavaScriptException and deal with
+   // errors loading the block space.
+   if (blocksContent.length != 0) {
+-    blocksContent=Blockly.Versioning.translateVersion(blocksContent)
++    blocksContent=Blockly.Versioning.translateVersionXML(blocksContent)
+     var xml = Blockly.Xml.textToDom(blocksContent);
+     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
++    Blockly.Versioning.translateVersionBlocks();
+   }
+ };
+ 
+diff --git a/appinventor/blocklyeditor/src/substitution.js b/appinventor/blocklyeditor/src/substitution.js
+new file mode 100644
+index 0000000..e4fed8d
+--- /dev/null
++++ b/appinventor/blocklyeditor/src/substitution.js
+@@ -0,0 +1,211 @@
++/**
++ * @fileoverview A substitution is an abstract set of input/output name pairs used for renaming. 
++ * The inputs form the domain of the substitution; the outputs form the range. 
++ * Applying a substitution to a name that's an input in its domain maps it to the associated output;
++ * Applying a substitution to a name that's not in its domain returns the name unchanged.
++ * @author fturbak@wellesley.edu (Lyn Turbak)
++ */
++
++/**
++ * History:
++ * [lyn, 11/16-17/13] created
++ */
++
++goog.provide('Blockly.Substitution');
++
++/**
++ * If the arguments are two equal-length arrays of strings, construct a substitution
++ *    by creating a bindings object that maps input strings from the first array
++ *    to corresponding strings in the second.
++ * If the argument is a single object describing the input/output bindings,
++ *   construct a substitution from that.
++ * If all other cases (e.g., no argument is provided)/ construct the empty substitution.
++ */
++Blockly.Substitution = function(arg1, arg2) {
++  this.bindings = {}; // empty substitution is default.
++  // Test that arg1 and arg2 are equal length arrays of strings
++  if (Blockly.Substitution.isAllStringsArray(arg2)
++      && Blockly.Substitution.isAllStringsArray(arg1)
++      && arg1.length === arg2.length) {
++    for (var i = 0; i < arg1.length; i++) {
++      this.bindings[arg1[i]] = arg2[i];
++    }
++  } else if (!arg2 && Blockly.Substitution.isBindingsObject(arg1)) {
++    // Make a copy of the bindings so not sharing binding structure with argument.
++    this.bindings = {};
++    for (var oldName in arg1) {
++      this.bindings[oldName] = arg1[oldName];
++    }
++  }
++}
++
++/**
++ * @param things
++ * @returns true iff things is an array containing only strings. Otherwise returns false.
++ */
++Blockly.Substitution.isAllStringsArray = function(things) {
++  // [lyn, 11/17/13] This fails for things that are obviously arrays. Dunno why
++  // if (!(things instanceof Array)) {
++  //  return false;
++  //}
++  if (typeof(things) !== "object" || !things.length) { // Say it's not an array if it's not an object with a length field.
++    return false;
++  }
++  for (var i = 0; i < things.length; i++) {
++    if (typeof(things[i]) !== "string") {
++      return false;
++    }
++  }
++  return true;
++}
++
++/**
++ * @param obj An object
++ * @returns true iff obj is an Object containting only string properties with string values.
++ *   Otherwise returns false.
++ */
++Blockly.Substitution.isBindingsObject = function(thing) {
++  // [lyn, 11/17/13] This fails for things that are obviously Objects. Dunno why
++  // if (!(obj instanceof Object)) {
++  //  return false;
++  if (typeof(thing) != "object") {
++    return false;
++  } else {
++    for (var prop in thing) {
++      if (! (typeof(prop) === "string")
++          || !(typeof(thing[prop] === "string"))) {
++        return false
++      }
++    }
++  }
++  return true;
++}
++
++/**
++ * @param oldName
++ * @param newName
++ * @returns {Substitution} A substitution with one pair from oldName to newName
++ */
++Blockly.Substitution.simpleSubstitution = function(oldName, newName) {
++  var bindings = {};
++  bindings[oldName] = newName;
++  return new Blockly.Substitution(bindings);
++}
++
++/**
++ * Apply a substitution to a name.
++ * @param name: a string
++ * @returns if the name is in the domain of the substition, returns the corresponding
++ *   element in the range; otherwise, returns name unchanged.
++ */
++Blockly.Substitution.prototype.apply = function (name) {
++  var output = this.bindings[name];
++  if (output) {
++    return output;
++  } else {
++    return name;
++  }
++}
++
++/**
++ * @param names: A list of strings
++ * @returns {Array of strings} the result of applying this substitution to each element of names
++ */
++Blockly.Substitution.prototype.map = function(names) {
++  thisSubst = this; // Need to name "this" for use in function closure passed to map.
++  return names.map( function(name) { return thisSubst.apply(name); } );
++}
++
++/**
++ * @returns {string} A string representation of this substitution
++ */
++Blockly.Substitution.prototype.toString = function() {
++  var bindingStrings = [];
++  for (var oldName in this.bindings) {
++    bindingStrings.push(oldName + ":" + this.bindings[oldName]);
++  }
++  return "Blockly.Substitution{" + bindingStrings.sort().join(",") + "}";
++}
++
++/**
++ * @returns {Substitution} a new copy of this substitution
++ */
++Blockly.Substitution.prototype.copy = function() {
++  var newSubst = new Blockly.Substitution();
++  for (var oldName in this.bindings) {
++    newSubst.bindings[oldName] = this.bindings[oldName];
++  }
++  return newSubst;
++}
++
++/**
++ * @param names: A list of strings
++ * @returns {Substitution} a new substitution whose domain is the intersection of
++ *   names and the domain of this substitution.
++ */
++Blockly.Substitution.prototype.restrictDomain = function(names) {
++  var newSubst = new Blockly.Substitution();
++  for (var i = 0; i < names.length; i++) {
++    var result = this.bindings[names[i]];
++    if (result) {
++      newSubst.bindings[names[i]] = result;
++    }
++  }
++  return newSubst;
++}
++
++/**
++ * @param names: A list of strings
++ * @returns {Substitution} a new substitution whose domain is the difference of
++ *   the domain of this substitution and names
++ */
++Blockly.Substitution.prototype.remove = function(names) {
++  var newSubst = new Blockly.Substitution();
++  for (var oldName in this.bindings) {
++    if (names.indexOf(oldName) == -1) {
++      newSubst.bindings[oldName] = this.bindings[oldName];
++    }
++  }
++  return newSubst;
++}
++
++/**
++ * @param otherSubst: A substitution
++ * @returns {Substitution} a new substitution whose domain is the union of the domains of
++ *   this substitution and otherSubst. Any input/output mapping in otherSubst whose
++ *   input is in this substitution overrides the input in this substitution.
++ */
++Blockly.Substitution.prototype.extend = function(otherSubst) {
++  var newSubst = this.copy();
++  for (var oldName in otherSubst.bindings) {
++    newSubst.bindings[oldName] = otherSubst.bindings[oldName];
++  }
++  return newSubst;
++}
++
++/**
++ * @returns {Array of String} a list of all the old names in the domain of this substitution.
++ */
++Blockly.Substitution.prototype.domain = function() {
++  var oldNames = [];
++  for (var oldName in this.bindings) {
++    oldNames.push(oldName);
++  }
++  return oldNames.sort();
++}
++
++/**
++ * @returns {Array of String} a copy of the input/output bindings in this substitution.
++ */
++Blockly.Substitution.prototype.getBindings = function() {
++  var bindings = {};
++  for (var oldName in this.bindings) {
++    bindings[oldName] = this.bindings[oldName];
++  }
++  return bindings;
++}
++
++
++
++
++
+diff --git a/appinventor/blocklyeditor/src/versioning.js b/appinventor/blocklyeditor/src/versioning.js
+old mode 100644
+new mode 100755
+index ee69ef8..d816987
+--- a/appinventor/blocklyeditor/src/versioning.js
++++ b/appinventor/blocklyeditor/src/versioning.js
+@@ -13,10 +13,11 @@ Blockly.Versioning = {};
+  * translateVersion is called from Blockly.Versioning.load to translate
+  * old blocks into current version.
+  * blocksContent, some xml, is sent in, its (possibly) modified value is returned.
+- *
++ * Note that this is the translation that occurs on the xml, we also do a pass
++ * after app is in Blockly format.
+ */
+ 
+-Blockly.Versioning.translateVersion = function(blocksContent) {
++Blockly.Versioning.translateVersionXML = function(blocksContent) {
+   // get the text into a dom object xmlFromFile
+   parser=new DOMParser();
+   var domFromFile = parser.parseFromString(blocksContent,"text/xml");
+@@ -26,14 +27,53 @@ Blockly.Versioning.translateVersion = function(blocksContent) {
+   // if there is no version in the file, then this is an early ai2 project, prior to
+   // 10/21/13, when the blocks internal xml structure was overhauled
+   // with descriptive mutator tags. blocksOverhaul translates the blocks
+-  if (versionTags.length==0) // there is a version
+-  {
++  
++  Blockly.Versioning.langVersion=17;  // default for oldest ai2
++  if (versionTags.length==0) {
+     Blockly.Versioning.blocksOverhaul(xmlFromFile);
+   }
+-
+-  // when we're done with all translation of xml object, write out to text and return
+-    // now write back dom object to a string and return it
++  else {
++    Blockly.Versioning.langVersion=versionTags[0].getAttribute('language-version')
++    // we set this so we can use it in translateVersionBlocks
++  }
++  // Note we can do more translation here, checking for version>x
++  // but some translation is also done post blockly load...see below
+   var serializer = new XMLSerializer();
+   return serializer.serializeToString(xmlFromFile);
+ 
+-}
++};
++
++
++/**
++ * translateVersionBlocks is the second-pass translator. It does translation
++ * on Blockly data structure after xml has been loaded
++*/
++Blockly.Versioning.translateVersionBlocks = function() {
++  if (Blockly.Versioning.langVersion<18)
++    Blockly.Versioning.canvasNameChanges();
++};
++
++/* HELPER METHODS FOR COMPONENT CHANGES */
++
++/**
++ * changeEventParameterName changes any event handler parameter name. Note this code is
++ * performed on the Blockly data structure after xml has been loaded.
++*/
++Blockly.Versioning.changeEventParameterName = function(componentType, eventName, 
++    oldParamName,newParamName) {
++  if (Blockly.mainWorkspace) {
++    var blocks = Blockly.mainWorkspace.getAllBlocks();
++    for (var i = 0; i < blocks.length; i++) {
++      var block = blocks[i];
++      if (block.blockType === 'event') {
++        if ((block.eventName===eventName) && (block.typeName===componentType)) {
++          Blockly.LexicalVariable.renameParamWithoutRenamingCapturables(block,
++             oldParamName,newParamName,newParamName);
++        }
++     
++      }
++    }
++  }
++};
++
++
+diff --git a/appinventor/blocklyeditor/src/versioning/018_canvasNameChanges.js b/appinventor/blocklyeditor/src/versioning/018_canvasNameChanges.js
+new file mode 100755
+index 0000000..9979f45
+--- /dev/null
++++ b/appinventor/blocklyeditor/src/versioning/018_canvasNameChanges.js
+@@ -0,0 +1,22 @@
++// Copyright 2012 Massachusetts Institute of Technology. All rights reserved.
++
++/**
++ * @fileoverview code for new version to modify some Canvas parameter names
++ *
++ * @author wolber@usfca.edu (David Wolber)
++ */
++
++/**
++ * canvasNameChanges does the translation for the Canvas component changes to
++ *   dragged and touched events, which had parameter name changes (touchedSprite to
++ *   touchedAnySprite and draggedSprite to draggedAnySprite). The translation
++ *   is performed after the app is in Blockly form, and it uses helper metho
++ *   in versioning.js
++ */
++
++Blockly.Versioning.canvasNameChanges = function() {
++  Blockly.Versioning.changeEventParameterName("Canvas","Dragged","draggedSprite",
++    "draggedAnySprite");
++  Blockly.Versioning.changeEventParameterName("Canvas","Touched","touchedSprite",
++    "touchedAnySprite");
++};
+\ No newline at end of file
+diff --git a/appinventor/components/src/com/google/appinventor/components/common/YaVersion.java b/appinventor/components/src/com/google/appinventor/components/common/YaVersion.java
+index 6f612b4..d44d12e 100644
+--- a/appinventor/components/src/com/google/appinventor/components/common/YaVersion.java
++++ b/appinventor/components/src/com/google/appinventor/components/common/YaVersion.java
+@@ -288,8 +288,9 @@ public class YaVersion {
+   // - Marked close-screen-with-result as a bad block
+   // - Added close-screen-with-value
+   // - Added close-screen-with-plain-text
+-  public static final int BLOCKS_LANGUAGE_VERSION = 17;
+-
++  // For BLOCKS_LANGUAGE_VERSION 18:
++  // - Changed canvas component param names (for Dragged,Touched, and DrawCircle)
++  public static final int BLOCKS_LANGUAGE_VERSION = 18;
+   // ................................. Component Version Numbers ..................................
+ 
+   // NOTE(lizlooney,user) - when a new component is added:
+@@ -386,7 +387,11 @@ public class YaVersion {
+   // - Added TouchDown, TouchUp, and Flung events.
+   // For CANVAS_COMPONENT_VERSION 7:
+   // - Callback parameters speed and heading were added to Flung. (for all sprites)
+-  public static final int CANVAS_COMPONENT_VERSION = 7;
++  // For CANVAS_COMPONENT_VERSION 8:
++  // - DrawCircle parameter names changed to centerx,centery, radius
++  // - Touched parameter touchedSprite name changed to touchedAnySprite
++  // - Dragged parameter draggedSprite name changed to draggedAnySprite
++  public static final int CANVAS_COMPONENT_VERSION = 8;
+ 
+   // For CHECKBOX_COMPONENT_VERSION 2:
+   // - The Value property was renamed to Checked.
+diff --git a/appinventor/components/src/com/google/appinventor/components/runtime/Canvas.java b/appinventor/components/src/com/google/appinventor/components/runtime/Canvas.java
+old mode 100644
+new mode 100755
+index b9875f3..ba1a531
+--- a/appinventor/components/src/com/google/appinventor/components/runtime/Canvas.java
++++ b/appinventor/components/src/com/google/appinventor/components/runtime/Canvas.java
+@@ -1038,17 +1038,17 @@ public final class Canvas extends AndroidViewComponent implements ComponentConta
+ 
+   /**
+    * When the user touches the canvas and then immediately lifts finger: provides
+-   * the (x,y) position of the touch, relative to the upper left of the canvas.  TouchedSprite
++   * the (x,y) position of the touch, relative to the upper left of the canvas.  TouchedAnySprite
+    * is true if the same touch also touched a sprite, and false otherwise.
+    *
+    * @param x  x-coordinate of the point that was touched
+    * @param y  y-coordinate of the point that was touched
+-   * @param touchedSprite {@code true} if a sprite was touched, {@code false}
++   * @param touchedAnySprite {@code true} if a sprite was touched, {@code false}
+    *        otherwise
+    */
+   @SimpleEvent
+-  public void Touched(float x, float y, boolean touchedSprite) {
+-    EventDispatcher.dispatchEvent(this, "Touched", x, y, touchedSprite);
++  public void Touched(float x, float y, boolean touchedAnySprite) {
++    EventDispatcher.dispatchEvent(this, "Touched", x, y, touchedAnySprite);
+   }
+ 
+   /**
+@@ -1101,10 +1101,10 @@ public final class Canvas extends AndroidViewComponent implements ComponentConta
+     EventDispatcher.dispatchEvent(this, "Flung", x, y, speed, heading, xvel, yvel, flungSprite);
+   }
+ 
+-  /**
++/**
+    * When the user does a drag from one point (prevX, prevY) to
+    * another (x, y).  The pair (startX, startY) indicates where the
+-   * user first touched the screen, and "draggedSprite" indicates whether a
++   * user first touched the screen, and "draggedAnySprite" indicates whether a
+    * sprite is being dragged.
+    *
+    * @param startX the starting x-coordinate
+@@ -1113,19 +1113,18 @@ public final class Canvas extends AndroidViewComponent implements ComponentConta
+    * @param prevY the previous y-coordinate (possibly equal to startY)
+    * @param currentX the current x-coordinate
+    * @param currentY the current y-coordinate
+-   * @param draggedSprite {@code true} if
++   * @param draggedAnySprite {@code true} if
+    *        {@link Sprite#Dragged(float, float, float, float, float, float)}
+    *        was called for one or more sprites for this segment, {@code false}
+    *        otherwise
+    */
+   @SimpleEvent
+   public void Dragged(float startX, float startY, float prevX, float prevY,
+-                      float currentX, float currentY, boolean draggedSprite) {
++                      float currentX, float currentY, boolean draggedAnySprite) {
+     EventDispatcher.dispatchEvent(this, "Dragged", startX, startY,
+-                                  prevX, prevY, currentX, currentY, draggedSprite);
++                                  prevX, prevY, currentX, currentY, draggedAnySprite);
+   }
+ 
+-
+   // Functions
+ 
+   /**
+@@ -1150,17 +1149,16 @@ public final class Canvas extends AndroidViewComponent implements ComponentConta
+     view.invalidate();
+   }
+ 
+-  /**
+-   * Draws a circle (filled in) at the given coordinates on the canvas, with the
+-   * given radius.
++ /**
++   * Draws a circle (filled in) with the given radius centered at the given coordinates on the canvas
+    *
+-   * @param x  x coordinate
+-   * @param y  y coordinate
+-   * @param r  radius
++   * @param centerX  x-coordinate of the center of the circle
++   * @param centerY  y-coordinate of the center of the circle
++   * @param radius  radius of the circle
+    */
+   @SimpleFunction
+-  public void DrawCircle(int x, int y, float r) {
+-    view.canvas.drawCircle(x, y, r, paint);
++  public void DrawCircle(int centerX, int centerY, float radius) {
++    view.canvas.drawCircle(centerX, centerY, radius, paint);
+     view.invalidate();
+   }
+ 

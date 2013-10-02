@@ -1,0 +1,52 @@
+checkAllBlocksForWarningsAndErrors: numBlocks = 1245 blockly-all.js:59879
+checkAllBlocksForWarningsAndErrors: numBlocks = 1245 blockly-all.js:59879
+************************************************************************ blockly-all.js:18197
+onMouseDown: numBlocks = 1245;  checkErrorsCountDelta = 5694; timeDelta = 35243 blockly-all.js:18200
+onMouseMove: drag=1;  checkErrorsCountDelta = 0; timeDelta = 150 blockly-all.js:18568
+onMouseMove: drag=1;  checkErrorsCountDelta = 0; timeDelta = 19 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 1039; timeDelta = 684 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 263 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 25 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 24 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 28 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 25 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 30 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 29 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 27 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 28 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 27 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 24 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 27 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 25 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+************************************************************************ blockly-all.js:18197
+onMouseDown: numBlocks = 1245;  checkErrorsCountDelta = 1039; timeDelta = 1208 blockly-all.js:18200
+onMouseMove: drag=1;  checkErrorsCountDelta = 1039; timeDelta = 768 blockly-all.js:18568
+onMouseMove: drag=1;  checkErrorsCountDelta = 0; timeDelta = 24 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 1039; timeDelta = 915 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 72 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 79 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 29 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 26 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 25 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 29 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 28 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 29 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 28 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 43 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 44 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 40 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 65 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 45 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 38 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 53 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 64 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 45 blockly-all.js:18568
+onMouseMove: drag=2;  checkErrorsCountDelta = 0; timeDelta = 50 blockly-all.js:18568

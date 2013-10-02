@@ -1,0 +1,73 @@
+README
+
+This directory is intended for all the files that are related to 
+Block -> Text or Text -> Block converstion. 
+Below is a brief description of these files.
+
+>>>lib/antlr3-all-min.js
+
+This is the ANLTR 3 library for the JavaScript target. 
+It is the standard library downloaded from the ANTLR website.
+
+>>>lib/antlr3-all-patched.js
+
+This is a patched version of the ANTLR 3 library for the JavaScript target.
+This patch solves an issue where the nextToken() function was yielding an infinite
+loop upon a NoViableAlt exception. 
+
+This patch was created by Corrado Campisano and can be found at: 
+http://www.servicemix.eu/_DL2OWL/_1.0.0/javascript/test-patched.html.
+
+The aforementioned issue can be found at: 
+https://code.google.com/p/antlr-javascript/issues/detail?id=17#c1
+
+>>>Tail.g
+
+This is an ANTLR grammar file defining TAIL. It generates a lexer and parser 
+(described below) in the JavaScript target. 
+
+If any modifications to TAIL need take place, this grammar file should be modified,
+and the TAILLexer and TAILParser will need to be re-generated. 
+
+To generate the Lexer and Parser, one must:
+
+	1) Add the jar file appinventor/lib/antlr/antlr-3.3-complete.jar to your
+	   CLASSPATH variable.
+	2) In the current directory, run java org.antlr.Tool Tail.g
+	   If the command completes without error, the existing files TAILLexer.js and
+	   TAILParser.js have been replaced with new ones corresponding to the current
+	   state of Tail.g.
+
+>>>TAIL.tokens
+
+This file contains a list of keywords in TAIL, defined in its grammar. The numbers represent the token number used to refer to them in the lexer and parser code.
+
+>>>TAILLexer.js
+
+This is the ANTLR generated Lexer file for the TAIL grammar. 
+It is responsible for turning a TAIL string into a token stream,
+which is then used by the TAILParser. The Lexer and Parser files should be
+re-generated everytime the grammar is modified.
+
+
+>>>TAILParser.js
+
+This is the ANTLR generated Parser file for the TAIL grammar.
+It is responsible for taking a token stream from the lexer and matching it to
+a particular parser rule. The parser will follow sub-rules until everthing 
+has been matched.
+
+By default, the Lexer and Parser throw an error upon incorrect syntax or a mismatched
+token. However, the ANTLR 3 library functions responsible for handling errors have been
+modified to add these errors to an Array which can be accessed through the getErrors()
+function (e.g. TAILParser.getErrors() or TAILLexer.getErrors()).
+
+>>>blocks_to_text_converter.js
+
+This file contains the code responsible for converting a regular App Inventor block into
+the corresponding TAIL block. When adding any new block, a translate_block_type_here
+function should be created which adds a string with the corresponding TAIL code to 
+Blockly.BlocksToTextConverter.tailText, a string containing the TAIL code for the group
+of blocks being translated. See examples already in the Blocks to Text Converter. 
+The block_type should be added to the appropriate array 
+(e.g. Blockly.BlocksToTextConverter.expressionBlocks).

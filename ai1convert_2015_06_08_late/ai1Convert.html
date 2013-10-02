@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- 
+ ai2Convert.html: HMTL interface to browser-based AI1 to AI2 project converter
+ Author: Lyn Turbak (fturbak@wellesley.edu)
+ --> 
+
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>AI1 to AI2 Converter</title>
+    <link rel="stylesheet" href="ai1Convert.css">
+    <!-- <link rel="stylesheet" href="../default.css">
+    <link rel="stylesheet" href="demo.css">
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro|Muli|Droid+Sans+Mono|Istok+Web' rel='stylesheet' type='text/css'>
+    -->
+  </head>
+
+  <body>
+    <div id="container">
+      <h1>AI1 to AI2 Converter</h1>
+
+      <h2>Convert a File:</h2>
+      <p><span class="form-label">choose an AI source file (.zip) to convert:</span>
+      <input type="file" accept="application/zip" id="file-input">
+
+      <!--
+      <p><span class="form-label">download the zip file</span>
+      <a id="download-button" href="#">Download</a>
+      -->
+
+      <h2>Errors:</h2>
+      <div id="errors"></div> <!-- place for error items --> 
+
+      <h2>Log:</h2>
+      <div id="log"></div><!-- place for log items --> 
+
+
+    </div> <!-- end id="container" --> 
+
+    <script type="text/javascript" src="gildas-lormeau-zip.js-4c93974/WebContent/zip.js"></script>
+    <script type="text/javascript" src="gildas-lormeau-zip.js-4c93974/WebContent/inflate.js"></script>
+    <script type="text/javascript" src="gildas-lormeau-zip.js-4c93974/WebContent/deflate.js"></script>
+    <!--
+    <script type="text/javascript" src="gildas-lormeau-zip.js-7ff4905/WebContent/zip.js"></script>
+    <script type="text/javascript" src="gildas-lormeau-zip.js-7ff4905/WebContent/inflate.js"></script>
+    <script type="text/javascript" src="gildas-lormeau-zip.js-7ff4905/WebContent/deflate.js"></script>
+    -->
+    <script src="../appinventor/lib/closure-library/closure/goog/base.js"></script>
+    <script type="text/javascript" src="AI1_v134a_simple_components.js"></script>
+    <script type="text/javascript" src="ai1ConvertBlocks.js"></script>
+    <script type="text/javascript" src="ai1ConvertZip.js"></script>
+  </body>
+</html>

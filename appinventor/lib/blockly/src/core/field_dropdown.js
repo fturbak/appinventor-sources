@@ -165,6 +165,9 @@ Blockly.FieldDropdown.prototype.showEditor_ = function() {
   Blockly.WidgetDiv.position(xy.x, xy.y, windowSize, scrollOffset);
   menu.setAllowAutoFocus(true);
   menuDom.focus();
+  // Shirley X. Lu's zoom functionality
+  svgGroup.setAttribute('transform',
+      'translate(' + x*Blockly.WORKSPACE_SCALE+ ', ' + (xy.y + borderBBox.height)*Blockly.WORKSPACE_SCALE + ')');
 };
 
 /**

@@ -58,6 +58,7 @@
     '../lib/blockly/src/core/workspace.js',
     '../lib/blockly/src/core/xml.js',
     '../lib/blockly/src/core/typeblock.js',
+    '../lib/blockly/src/core/zoom.js',
 
     //finally, include any of our own .js file in any orde
     "./src/blocklyeditor.js",

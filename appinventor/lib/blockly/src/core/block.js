@@ -1,6 +1,6 @@
 /**
  * @license
- * Visual Blocks Editor
+  * Visual Blocks Editor
  *
  * Copyright 2011 Google Inc.
  * https://blockly.googlecode.com/
@@ -220,6 +220,13 @@ Blockly.Block.prototype.warning = null;
 Blockly.Block.prototype.errorIcon = null;
 
 /**
+ * Dictionary of block's text bubble icons (for doit, watch, xml, yail, etc.)
+ * Maps a string key to an instance of Blockly.Comment.
+ * @type {Blockly.Comment}
+ */
+Blockly.Block.prototype.textBubbles = {};
+
+/**
  * Returns a list of mutator, comment, and warning icons.
  * @return {!Array} List of icons.
  */
@@ -236,6 +243,10 @@ Blockly.Block.prototype.getIcons = function() {
   }
   if (this.errorIcon) {
     icons.push(this.errorIcon);
+  }
+  var textBubbleKeys = Object.keys(this.textBubbles);
+  for (var i = 0, key; key = textBubbleKeys[i]; i++) {
+    icons.push(this.textBubbles[key]);
   }
   return icons;
 };
@@ -2013,6 +2024,56 @@ Blockly.Block.prototype.setCommentText = function(text) {
     }
   }
 };
+
+/**
+ * [lyn, 08/05/2104] Returns the text from the text bubble with this key (or '' if none).
+ * @param {?string} iconChar: the single-character string used to represent the bubble
+ *   and index it in this.textBubbles.
+ * Note: this could be used to replace comments, by using '?' iconChar.
+ * @return {string} the text associated with the textBubble.
+ */
+Blockly.Block.prototype.getTextBubbleText = function(iconChar) {
+  var textBubble = this.textBubbles[iconChar];
+  if (textBubble) {
+    var text = this.comment.getText();
+    // Trim off trailing whitespace.
+    return text.replace(/\s+$/, '').replace(/ +\n/g, '\n');
+  }
+  return '';
+};
+
+/**
+ * [lyn, 08/05/2104]
+ * Set this block's textBubble text, indexed by iconChar.
+ * @param {?string} iconChar: the single-character string used to represent the bubble
+ *   and index it in this.textBubbles.
+ * @param {?string} text The text, or null to delete.
+ */
+Blockly.Block.prototype.setTextBubbleText = function(iconChar, text) {
+  var textBubble = this.textBubbles[iconChar];
+  var changedState = false;
+  if (goog.isString(text)) {
+    if (!textBubble) {
+      textBubble = new Blockly.Comment(this, iconChar);
+      this.textBubbles[iconChar] = textBubble;
+      changedState = true;
+    }
+    textBubble.setText(/** @type {string} */ (text));
+  } else {
+    if (textBubble) {
+      this.comment.dispose();
+      changedState = true;
+    }
+  }
+  if (this.rendered) {
+    this.render();
+    if (changedState) {
+      // Adding or removing a comment icon will cause the block to change shape.
+      this.bumpNeighbours_();
+    }
+  }
+};
+
 
 /**
  * Set this block's warning text.

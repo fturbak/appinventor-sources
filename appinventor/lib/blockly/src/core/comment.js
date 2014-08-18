@@ -34,10 +34,15 @@ goog.require('goog.userAgent');
 /**
  * Class for a comment.
  * @param {!Blockly.Block} block The block associated with this comment.
+ * [08/05/14, lyn] Added 2nd param to support multiple text bubbles on blocks.
+ * @param {!String} opt_iconChar: A single character for icon.
+ * @param {!boolean} opt_clearable: A single character for icon.
  * @extends {Blockly.Icon}
  * @constructor
  */
-Blockly.Comment = function(block) {
+Blockly.Comment = function(block, opt_iconChar, opt_clearable) {
+  this.iconChar = opt_iconChar ? opt_iconChar : '?';
+  this.clearable = opt_clearable ? true : false;
   Blockly.Comment.superClass_.constructor.call(this, block);
   this.createIcon_();
 };
@@ -81,7 +86,8 @@ Blockly.Comment.prototype.createIcon_ = function() {
       {'class': 'blocklyIconMark',
        'x': Blockly.Icon.RADIUS,
        'y': 2 * Blockly.Icon.RADIUS - 3}, this.iconGroup_);
-  this.iconMark_.appendChild(document.createTextNode('?'));
+  // this.iconMark_.appendChild(document.createTextNode('?'));
+  this.iconMark_.appendChild(document.createTextNode(this.iconChar));
 };
 
 /**
@@ -105,6 +111,14 @@ Blockly.Comment.prototype.createEditor_ = function() {
   var body = document.createElementNS(Blockly.HTML_NS, 'body');
   body.setAttribute('xmlns', Blockly.HTML_NS);
   body.className = 'blocklyMinimalBody';
+
+  // [lyn, 08/18/2014] new clear button
+  if (this.clearable) {
+    this.clearButton_ = document.createElementNS(Blockly.HTML_NS, 'button');
+    this.clearButton_.appendChild(document.createTextNode('Clear'));
+    body.appendChild(this.clearButton_);
+  }
+
   this.textarea_ = document.createElementNS(Blockly.HTML_NS, 'textarea');
   this.textarea_.className = 'blocklyCommentTextarea';
   this.textarea_.setAttribute('dir', Blockly.RTL ? 'RTL' : 'LTR');

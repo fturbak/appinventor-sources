@@ -135,6 +135,12 @@ Blockly.BlocklyEditor.startup = function(documentBody, formName) {
     }
   }
 
+  Blockly.BlocklyEditor.doitChar = "D";
+  Blockly.BlocklyEditor.watchChar = "W";
+  Blockly.BlocklyEditor.xmlChar = "X";
+  Blockly.BlocklyEditor.yailChar = "Y";
+
+
   /******************************************************************************/
 
   Blockly.bindEvent_(Blockly.mainWorkspace.getCanvas(), 'blocklyWorkspaceChange', this,
@@ -181,7 +187,7 @@ Blockly.Block.prototype.customContextMenu = function(options) {
       } else {
         yailText = yailTextOrArray;
       }
-      myBlock.setCommentText(yailText);
+      myBlock.setTextBubbleText(Blockly.BlocklyEditor.yailChar, yailText);
     };
     options.push(yailOption);
   }
@@ -210,6 +216,31 @@ Blockly.Block.prototype.customContextMenu = function(options) {
     }
   };
   options.push(doitOption);
+  if (window.parent.BlocklyPanel_checkIsAdmin()) {
+    // [lyn & karishma, 11/15/13] Added two XML options
+    var xmlOption = {enabled: this.disabled?false : true};
+    xmlOption.text = "Generate XML for this block";
+    xmlOption.callback = function() {
+      var xmlText = Blockly.Xml.domToPrettyText(Blockly.Xml.blockToDom_(myBlock));
+      myBlock.setTextBubbleText(Blockly.BlocklyEditor.xmlChar, xmlText);
+    };
+    options.push(xmlOption);
+  }
+  if (window.parent.BlocklyPanel_checkIsAdmin()) {
+    var xmlOption = {enabled: this.disabled?false : true};
+    xmlOption.text = "Generate XML for this workspace";
+    xmlOption.callback = function() {
+      var workspaceDom = Blockly.Xml.workspaceToDom(myBlock.workspace);
+      // Remove all comment tags (else they clutter up bubble!)
+      var commentElements =workspaceDom.getElementsByTagName("comment");
+      for (var i = 0, commentElement; commentElement = commentElements[i]; i++) {
+        commentElement.parentNode.removeChild(commentElement);
+      }
+      var xmlText = Blockly.Xml.domToPrettyText(workspaceDom);
+      myBlock.setTextBubbleText(Blockly.BlocklyEditor.xmlChar, xmlText);
+    };
+    options.push(xmlOption);
+  }
   if(myBlock.procCustomContextMenu){
     myBlock.procCustomContextMenu(options);
   }

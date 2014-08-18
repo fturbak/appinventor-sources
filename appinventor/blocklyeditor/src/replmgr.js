@@ -606,6 +606,7 @@ Blockly.ReplMgr.processRetvals = function(responses) {
     Blockly.WarningHandler.checkAllBlocksForWarningsAndErrors();
 };
 
+/*
 Blockly.ReplMgr.setDoitResult = function(block, value) {
     var patt = /Do It Result:.*?\n---\n/m;
     var comment = "";
@@ -629,6 +630,18 @@ Blockly.ReplMgr.setDoitResult = function(block, value) {
     }
     block.setCommentText(comment);
     block.comment.setVisible(true);
+};
+*/
+
+Blockly.ReplMgr.setDoitResult = function(block, value) {
+  var separator = "";
+  if  (block.getTextBubbleText(Blockly.BlocklyEditor.doitChar)) {
+    separator = "\n-----\n";
+    // If we don't set visible to false, the comment
+    // doesn't always change when it should...
+    // this.textBubbles[Blockly.BlocklyEditor.doitChar].setVisible(false);
+  }
+  block.setTextBubbleText(Blockly.BlocklyEditor.doitChar, separator + value);
 };
 
 Blockly.ReplMgr.startAdbDevice = function(rs, usb) {

@@ -1204,7 +1204,43 @@
 ;;; be explicity shown in error messages.
 ;;; This procedure is currently almost completely redundant with coerce-to-string
 ;;; but it give us flexibility to tailor display for other data types
-(define get-display-representation
+ (define get-display-representation
+   (lambda (arg) (get-json-display-representation arg))
+   ;; (lambda (arg) (get-original-display-representation arg))
+ )
+
+(define get-json-display-representation
+  ;; there seems to be a bug in Kawa that makes (/ -1 0) equal to (/ 1 0)
+  ;; which is why this uses 1.0 and -1.0
+  (let ((+inf (/ 1.0 0))
+        (-inf (/ -1.0 0)))
+    (lambda (arg)
+      (cond ((= arg +inf) "+infinity")
+            ((= arg -inf) "-infinity")
+            ((eq? arg *the-null-value*) *the-null-value-printed-rep*)
+            ((symbol? arg)
+             (symbol->string arg))
+            ((string? arg) (string-append "\"" arg "\""))
+            ((number? arg) (appinventor-number->string arg))
+            ((boolean? arg) (boolean->string arg))
+            ((yail-list? arg) (get-json-display-representation (yail-list->kawa-list arg)))
+            ((list? arg)
+             (let ((pieces (map get-json-display-representation arg)))
+                (string-append "[" (join-strings piecies ", ") "]")))
+            (else (call-with-output-string (lambda (port) (display arg port))))))))
+
+(define (join-strings strings separator)
+   (cond ((null? strings) "")
+         ((null? (cdr strings)) (car strings))
+         (else ;; have at least two strings
+           (apply string-append
+                  (cons (car strings)
+                        (let recur ((strs (cdr strings)))
+                          (if (null? strs)
+                              '()
+                              (cons separator (cons (car strs) (recur (cdr strs)))))))))))
+
+(define get-original-display-representation
   ;; there seems to be a bug in Kawa that makes (/ -1 0) equal to (/ 1 0)
   ;; which is why this uses 1.0 and -1.0
   (let ((+inf (/ 1.0 0))
@@ -1221,9 +1257,9 @@
                  arg))
             ((number? arg) (appinventor-number->string arg))
             ((boolean? arg) (boolean->string arg))
-            ((yail-list? arg) (get-display-representation (yail-list->kawa-list arg)))
+            ((yail-list? arg) (get-original-display-representation (yail-list->kawa-list arg)))
             ((list? arg)
-             (let ((pieces (map get-display-representation arg)))
+             (let ((pieces (map get-original-display-representation arg)))
                (call-with-output-string (lambda (port) (display pieces port)))))
             (else (call-with-output-string (lambda (port) (display arg port))))))))
 
@@ -1408,7 +1444,7 @@
         (else
          (random-set-seed 0))))
 
-;;; Returns a number in the range [0, 1)
+;;; Returns a number in the range 654440, 1)
 (define (random-fraction)
   (*random-number-generator*:nextDouble))
 

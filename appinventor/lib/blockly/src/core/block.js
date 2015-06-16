@@ -958,24 +958,10 @@ Blockly.Block.prototype.onMouseMove_ = function(e) {
        but this shouldn't be noticable. */
       e.stopPropagation();
       return;
-  }
-  Blockly.removeAllRanges();
-  var dx = (e.clientX - this.startDragMouseX)/Blockly.WORKSPACE_SCALE;
-  var dy = (e.clientY - this.startDragMouseY)/Blockly.WORKSPACE_SCALE;
-  if (Blockly.Block.dragMode_ == 1) {
-    // Still dragging within the sticky DRAG_RADIUS.
-    var dr = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-    if (dr > Blockly.DRAG_RADIUS) {
-      // Switch to unrestricted dragging.
-      Blockly.Block.dragMode_ = 2;
-      // Push this block to the very top of the stack.
-      this.setParent(null);
-      this.setDragging_(true);
->>>>>>> zoom function added; new fixes will be added
     }
     Blockly.removeAllRanges();
-    var dx = e.clientX - this_.startDragMouseX;
-    var dy = e.clientY - this_.startDragMouseY;
+    var dx = (e.clientX - this_.startDragMouseX)/Blockly.WORKSPACE_SCALE;
+    var dy = (e.clientY - this_.startDragMouseY)/Blockly.WORKSPACE_SCALE;
     if (Blockly.Block.dragMode_ == 1) {
       // Still dragging within the sticky DRAG_RADIUS.
       var dr = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));

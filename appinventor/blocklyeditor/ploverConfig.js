@@ -148,7 +148,12 @@
     "./src/replmgr.js",
 
     // extras
-    "./src/extras.js"
+    "./src/extras.js",
+
+    // Files added for Venbrace
+    './src/blocks/code.js', // for Venbrace codeblocks, based on Karishma codeblocks thesis
+    './src/field_codeblockinput.js' //added by Karishma for her codeblocks thesis
+
     ],
 
   // This must be specified because datetimesymbols.js from the Closure Library
